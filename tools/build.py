@@ -12,6 +12,22 @@ URL = CFG['site_url'].rstrip('/'); NAME = CFG['site_name']; ST = CFG['studio']; 
 LOGO = ('<svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="3" width="20" height="26" rx="3" fill="#1F3F7A"/><path d="M9 10h10M9 15h10M9 20h6" stroke="#fff" stroke-width="2" stroke-linecap="round"/>'
         '<circle cx="24" cy="23" r="6" fill="#C3303A"/><path d="M21.5 23l1.8 1.8 3.2-3.4" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>')
 
+
+# ---------------------------------------------------------------- Telar Labs family links
+FAMILY = [f for f in CFG.get('family', []) if f['name'] != CFG['site_name']]
+HUB = CFG.get('studio_url', '')
+
+def family_row():
+    if not FAMILY: return ''
+    head = f'<a href="{E(HUB)}">More from {E(CFG["studio"])}</a>' if HUB else f'More from {E(CFG["studio"])}'
+    links = ''.join(f'<a href="{E(f["url"])}" title="{E(f["blurb"])}">{E(f["name"])}</a>' for f in FAMILY)
+    return f'<div class="wrap family"><span class="family-h">{head}:</span>{links}</div>'
+
+def family_promo(title):
+    if not FAMILY: return ''
+    links = ''.join(f'<a href="{E(f["url"])}"><b>{E(f["name"])}</b><span>{E(f["blurb"])}</span></a>' for f in FAMILY)
+    return f'<section class="wrap section family-promo"><h2>{title}</h2><div class="family-links">{links}</div></section>'
+
 def ad(key):
     slot = CFG['ad_slots'].get(key, '')
     if not (CFG['adsense_client'] and slot): return ''
@@ -51,7 +67,7 @@ def page(path, title, desc, body):
     <div><h4>Use it</h4><a href="/write/">Start writing</a><a href="/review/">Review .drafttrail files</a><a href="/how-it-works/">How it works</a><a href="/for-teachers/">For teachers</a><a href="/faq/">FAQ</a></div>
     <div><h4>{E(ST)}</h4><a href="/about/">About</a><a href="/privacy/">Privacy policy</a><a href="/terms/">Terms of use</a><a href="/contact/">Contact</a></div>
   </div>
-</div><div class="wrap fine">&copy; {date.today().year} {E(ST)}.</div></footer>
+</div>{family_row()}<div class="wrap fine">&copy; {date.today().year} {E(ST)}.</div></footer>
 </body>
 </html>'''
     out = os.path.join(PUB, path.strip('/'), 'index.html') if path.endswith('/') else os.path.join(PUB, path.strip('/'))
@@ -85,6 +101,7 @@ def home():
 <li><h3>Hand in the file</h3><p>Tap <b>Download DraftTrail file</b> and attach it with the writing, for example in Google Classroom.</p></li>
 <li><h3>Teacher replays it</h3><p>Open the files on <a href="/review/">the review page</a> to see flags, a timeline and a replay of each essay.</p></li></ol></section>
 <section class="wrap section"><div class="callout"><h2>DraftTrail is a conversation starter</h2><p>A big paste or very fast writing doesn't prove cheating. Students may paste their own notes or quotes. DraftTrail shows what happened so teachers can ask good questions, and gives honest students a simple way to show their effort.</p><a class="btn" href="/how-it-works/">Read how it works</a></div></section>'''
+    body += family_promo('More free tools for teachers')
     page('/', f'{NAME} – Free Writing Process Recorder for Students and Teachers',
          'DraftTrail records how an essay was written: typing, pauses, revisions and pasted text. Teachers replay it to check originality. Free, no accounts, nothing uploaded.', body)
 
