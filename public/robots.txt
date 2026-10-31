@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: /write/
 Disallow: /review/
-Sitemap: https://wordspath.pages.dev/sitemap.xml
+Sitemap: https://drafttrail.pages.dev/sitemap.xml
