@@ -53,7 +53,7 @@ def page(path, title, desc, body):
 <link rel="canonical" href="{E(URL + path)}">
 <meta property="og:title" content="{E(full)}"><meta property="og:description" content="{E(desc)}"><meta property="og:url" content="{E(URL + path)}">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#1F3F7A">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,600&family=Public+Sans:wght@400;600;700;800&display=swap">
+<link rel="preload" href="/assets/fonts/public-sans-400.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/assets/fonts/fonts.css">
 <link rel="stylesheet" href="/assets/site.css?v={CSSV}">
 {ads}
 </head>
