@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review writing | Bakas</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600&family=Public+Sans:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <a class="logo" href="/"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="3" width="20" height="26" rx="3" fill="#1F3F7A"/><path d="M9 10h10M9 15h10M9 20h6" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="23" r="6" fill="#C3303A"/><path d="M21.5 23l1.8 1.8 3.2-3.4" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div><h1>Bakas</h1><small>Review writing</small></div></a>
+    <a class="btn" href="/write/">Open the writing page</a>
+  </div>
+  <label class="drop" id="drop">
+    <b style="font-size:18px">Open students' .bakas files</b>
+    <span class="note">Drag files here or tap to choose. You can open many at once. Files stay on your device; nothing is uploaded.</span>
+    <input type="file" id="file" accept=".bakas,application/json" multiple hidden>
+    <span class="btn pri">Choose files</span>
+  </label>
+  <div class="row" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn" id="sampleBtn">Try with two sample essays</button><span class="note" id="loadMsg"></span></div>
+  <section id="teacher" class="tgrid" hidden>
+    <div class="panel subs" id="subs"><h3>Submissions</h3></div>
+    <div class="report" id="report"></div>
+  </section>
+</div>
+<script src="/assets/bakas-core.js"></script>
+<script>
+(()=>{
+const $=s=>document.querySelector(s);
+/* ---------- synthetic submissions ---------- */
+function gen(steps,seed){
+  let r=seed; const rnd=()=>(r=(r*9301+49297)%233280)/233280;
+  const ops=[]; let t=0, len=0;
+  for(const st of steps){
+    if(st.pause){t+=st.pause; continue}
+    if(st.paste){t+=400; ops.push({t,p:len,d:0,i:st.paste,k:'paste'}); len+=st.paste.length; continue}
+    if(st.type){ const sp=st.speed||1;
+      for(const ch of st.type){
+        if(st.typos&&rnd()<st.typos&&/[a-z]/.test(ch)){ // typo then fix
+          const wrong=String.fromCharCode(97+Math.floor(rnd()*26)); t+=(120+rnd()*200)*sp; ops.push({t,p:len,d:0,i:wrong,k:'type'}); len++;
+          t+=(300+rnd()*500)*sp; ops.push({t,p:len-1,d:1,i:'',k:'type'}); len--; }
+        t+=(110+rnd()*240)*sp + (ch===' '&&rnd()<.08?1500+rnd()*4000:0) + (ch==='.'?1200+rnd()*6000*(st.think||1):0);
+        ops.push({t,p:len,d:0,i:ch,k:'type'}); len++;
+      }
+    }
+    if(st.backspace){ for(let j=0;j<st.backspace;j++){t+=90+rnd()*80; ops.push({t,p:len-1,d:1,i:'',k:'type'}); len--} }
+  }
+  return ops;
+}
+const maria=gen([
+  {type:'Ang pangarap ko ay maging isang nurse. Gusto ko makatulong sa mga may sakit lalo na sa probinsya namin. ',typos:.02},
+  {pause:95000},
+  {paste:'Ang pangarap ay nagsisilbing ilaw na gumagabay sa bawat hakbang ng ating buhay. Sa kabila ng mga pagsubok at hamon na ating hinaharap, ang matibay na determinasyon at walang sawang pagsisikap ang magdadala sa atin tungo sa tagumpay. Bilang isang kabataang Pilipino, naniniwala ako na ang edukasyon ang susi upang makamit ang aking mga minimithi at makapag-ambag sa pag-unlad ng ating bayan. Higit pa rito, mahalaga ring isaalang-alang ang kapakanan ng ating pamilya at komunidad sa bawat desisyong ating gagawin. '},
+  {pause:40000},
+  {paste:'Sa huli, ang tunay na tagumpay ay hindi lamang nasusukat sa narating kundi sa mga buhay na ating napabuti. '},
+  {pause:20000},
+  {type:'Kaya mag aaral ako ng mabuti para maabot ko ito.',typos:.01}
+],7);
+const rafael=gen([
+  {type:'Simula bata pa ako, gusto ko na maging inhinyero. ',typos:.05,speed:1.4,think:2},
+  {type:'Tuwing umuulan sa amin, bumabaha sa kalye at hindi kami makapasok sa eskwela. ',typos:.05,speed:1.4,think:2},
+  {type:'Naisip ko, paano kung may tulay o kanal na maayos? Doon nagsimula ang pangarap ko kasi',typos:.05,speed:1.4},
+  {backspace:5},{type:'. ',speed:1.4},
+  {pause:420000},
+  {type:'Hindi madali kasi kailangan magaling sa math, at aaminin ko na nahihirapan ako minsan. ',typos:.05,speed:1.4,think:2},
+  {type:'Pero tinutulungan ako ng kuya ko tuwing gabi. ',typos:.05,speed:1.4,think:2},
+  {type:'Balang araw, gusto kong gumawa ng mga daan at tulay sa bayan namin para hindi na mahirapan ang mga bata na tulad ko. ',typos:.05,speed:1.4,think:2},
+  {pause:60000},
+  {type:'Gusto ko ring ipakita sa mga magulang ko na sulit ang sakripisyo nila. Nagtitinda si nanay ng kakanin sa palengke at si tatay ay nagmamaneho ng tricycle. Kahit pagod sila, lagi nilang sinasabi na mag-aral ako nang mabuti. Kaya ngayon pa lang, nagbabasa na ako tungkol sa mga tulay at sinusubukan kong gumawa ng maliliit na modelo gamit ang popsicle sticks. Sana balang araw, ako naman ang tutulong sa kanila.',typos:.05,speed:1.4,think:2}
+],3);
+const SAMPLES=[{id:'s-maria',name:'Maria Santos (sample)',task:'Sanaysay: Ang Aking Pangarap',ops:maria,leaves:4,away_ms:210000,sample:true},{id:'s-rafael',name:'Rafael Cruz (sample)',task:'Sanaysay: Ang Aking Pangarap',ops:rafael,leaves:1,away_ms:15000,sample:true}];
+
+
+let subs=[];
+function extraFlags(s,a){
+  if((s.leaves||0)>=5) a.flags.push(`Left the writing page ${s.leaves} times (${mmss(s.away_ms||0)} away in total)`);
+  if(s.mismatch) a.flags.push('The text in the file does not match its own recording. The file may have been edited.');
+}
+function addSub(d,fname){
+  if(!d||!Array.isArray(d.ops)) throw new Error('not a Bakas file');
+  const ok=d.ops.every(o=>typeof o.t==='number'&&typeof o.p==='number'&&typeof o.d==='number'&&typeof o.i==='string');
+  if(!ok) throw new Error('damaged file');
+  const rebuilt=build(d.ops,d.ops.length).map(c=>c.ch).join('');
+  const s={id:'f'+Math.random().toString(36).slice(2),name:String(d.name||fname).slice(0,80),task:String(d.task||'').slice(0,140),ops:d.ops,leaves:d.leaves||0,away_ms:d.away_ms||0,
+    when:d.finished||d.lastAt||d.created, mismatch: typeof d.text==='string' && d.text!==rebuilt};
+  subs.push(s); return s;
+}
+async function openFiles(files){
+  let n=0, bad=[];
+  for(const f of files){ try{ addSub(JSON.parse(await f.text()),f.name); n++ }catch(e){ bad.push(f.name) } }
+  $('#loadMsg').textContent=`${n} file${n===1?'':'s'} opened.`+(bad.length?` Couldn't read: ${bad.join(', ')}`:'');
+  if(subs.length){ sel=sel&&subs.some(x=>x.id===sel)?sel:subs[0].id; show() }
+}
+$('#file').onchange=e=>openFiles([...e.target.files]);
+const dz=$('#drop');
+['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault(); dz.classList.add('over')}));
+['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault(); dz.classList.remove('over')}));
+dz.addEventListener('drop',e=>openFiles([...e.dataTransfer.files]));
+$('#sampleBtn').onclick=()=>{ SAMPLES.forEach(x=>{ if(!subs.some(s=>s.id===x.id)) subs.push({...x,when:Date.now()}) }); sel=SAMPLES[0].id; show() };
+function show(){ $('#teacher').hidden=false; renderSubs(); renderReport() }
+let sel=null, play=null;
+function renderSubs(){
+  const el=$('#subs'); el.innerHTML='<h3>Submissions</h3>'+subs.map(s=>{const a=analyze(s.ops); extraFlags(s,a);
+    return `<button class="sub" data-id="${s.id}" aria-pressed="${sel===s.id}"><span class="n"><span>${esc(s.name)}</span>
+      ${a.flags.length?`<span class="tag t-flag">${a.flags.length} to review</span>`:'<span class="tag t-ok">No flags</span>'}</span>
+      <span class="note">${a.w} words${s.when?' · '+new Date(s.when).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):''}</span></button>`}).join('');
+  el.querySelectorAll('.sub').forEach(b=>b.onclick=()=>{sel=b.dataset.id; renderSubs(); renderReport()});
+}
+const ico={flag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg>',ok:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5 9-10"/></svg>'};
+function renderReport(){
+  stopPlay();
+  const s=subs.find(x=>x.id===sel)||subs[0]; if(!s){$('#report').innerHTML='';return} const a=analyze(s.ops); extraFlags(s,a);
+  const flags=a.flags.length?a.flags.map(f=>`<div class="flag">${ico.flag}<span>${esc(f)}</span></div>`).join('')
+    :`<div class="flag ok">${ico.ok}<span>Nothing unusual. Steady typing with pauses and corrections.</span></div>`;
+  const M=(v,l,hi)=>`<div class="m"><b class="${hi?'hi':''}">${v}</b><span>${l}</span></div>`;
+  $('#report').innerHTML=`
+  <div class="panel rhead"><span class="lbl">${esc(s.task||"Untitled assignment")}</span><h2>${esc(s.name)}</h2>
+    <div class="flags">${flags}</div>
+    <p class="note" style="margin:0">Flags are reasons to look closer and talk with the student, not proof of cheating.</p></div>
+  <div class="metrics">
+    ${M(a.w,'words in final essay')}${M(a.pastePct+'%','of the essay was pasted',a.pastePct>=30)}${M(mmss(a.active),'active writing time')}
+    ${M(a.sessions,a.sessions===1?'writing session':'writing sessions')}${M(a.rev+'%','of typed text revised',a.w>=120&&a.rev<2)}${M(a.pauses,'thinking pauses (5s+)')}${M(s.leaves||0,'times left the page',(s.leaves||0)>=5)}${M(mmss(s.away_ms||0),'time away from the page')}${M(s.mismatch?'No':'Yes','final text matches the recording',s.mismatch)}
+  </div>
+  <div class="panel chartbox"><div class="lbl">Essay length over time</div>${chart(s.ops)}
+    <div class="legend"><span><i style="background:var(--chart)"></i>Characters in essay</span><span><i style="background:var(--pen);border-radius:50%"></i>Paste</span></div></div>
+  <div class="panel replay"><div class="lbl">Replay</div>
+    <div class="ctrl"><button class="btn pri" id="pbtn">Play</button>
+      <input type="range" id="scrub" min="0" max="${s.ops.length}" value="${s.ops.length}" aria-label="Replay position">
+      <select id="speed" aria-label="Replay speed"><option value="4">4×</option><option value="10" selected>10×</option><option value="30">30×</option></select>
+      <span class="clock" id="pclock">${mmss(a.total)}</span></div>
+    <div class="doc" id="doc"></div>
+    <div class="legend"><span><i style="background:var(--paste)"></i>Pasted text</span><span>Long pauses are shortened during replay.</span></div></div>`;
+  const ops=s.ops; let arr=build(ops,ops.length), idx=ops.length;
+  const doc=$('#doc'), sc=$('#scrub');
+  const draw=()=>{let h='',run='',cur=null; const flush=()=>{if(run){h+=cur==='p'?`<mark>${esc(run)}</mark>`:esc(run); run=''}};
+    for(const c of arr){if(c.o!==cur){flush(); cur=c.o} run+=c.ch} flush(); doc.innerHTML=h+'<span class="caret"></span>';
+    $('#pclock').textContent=`${mmss(idx?ops[idx-1].t:0)} / ${mmss(a.total)}`; sc.value=idx};
+  const seek=n=>{ if(n<idx){arr=build(ops,n)} else for(let i=idx;i<n;i++) apply(arr,ops[i]); idx=n; draw() };
+  draw();
+  sc.oninput=()=>{stopPlay(); seek(+sc.value)};
+  $('#pbtn').onclick=()=>{ if(play){stopPlay(); return}
+    if(idx>=ops.length) seek(0);
+    $('#pbtn').textContent='Pause'; let vt=idx?ops[idx-1].t:0, last=performance.now(), comp=0;
+    const step=now=>{ const dt=(now-last)*(+$('#speed').value); last=now; vt+=dt;
+      let n=idx; while(n<ops.length&&ops[n].t<=vt+comp) n++;
+      if(n<ops.length&&n===idx){const gap=ops[n].t-(vt+comp); if(gap>1500*(+$('#speed').value)) comp+=gap-300} // shorten long pauses
+      if(n!==idx) seek(n);
+      if(idx>=ops.length){stopPlay(); return} play=requestAnimationFrame(step) };
+    play=requestAnimationFrame(step) };
+}
+function stopPlay(){ if(play){cancelAnimationFrame(play); play=null} const b=$('#pbtn'); if(b) b.textContent='Play' }
+
+})();
+</script>
+</body>
+</html>
