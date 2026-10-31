@@ -1,4 +1,4 @@
-// Bakas core: rebuild text from recorded edits, analyze the writing process, draw the chart.
+// WordsPath core: rebuild text from recorded edits, analyze the writing process, draw the chart.
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const words=s=>(s.trim().match(/\S+/g)||[]).length;
 const mmss=ms=>{const s=Math.round(ms/1000);return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`};

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Write | Bakas</title>
+<title>Write | WordsPath</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600&family=Public+Sans:wght@400;600;700;800&display=swap">
@@ -12,13 +12,13 @@
 <body>
 <div class="wrap">
   <div class="head">
-    <a class="logo" href="/"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="3" width="20" height="26" rx="3" fill="#1F3F7A"/><path d="M9 10h10M9 15h10M9 20h6" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="23" r="6" fill="#C3303A"/><path d="M21.5 23l1.8 1.8 3.2-3.4" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div><h1>Bakas</h1><small>Writing process recorder</small></div></a>
+    <a class="logo" href="/"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="3" width="20" height="26" rx="3" fill="#1F3F7A"/><path d="M9 10h10M9 15h10M9 20h6" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="23" r="6" fill="#C3303A"/><path d="M21.5 23l1.8 1.8 3.2-3.4" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div><h1>WordsPath</h1><small>Writing process recorder</small></div></a>
     <span class="saved" id="saved"></span>
   </div>
 
   <div class="panel task">
     <label class="field"><span>Assignment</span><input id="task" maxlength="140" placeholder="e.g. Essay: My Dream"></label>
-    <div class="consent">Your writing process is recorded inside this box only: typing, pauses, deletions and pasted text. Nothing is uploaded. When you finish, you download a Bakas file and hand it in with your work, so your teacher can replay how you wrote it.</div>
+    <div class="consent">Your writing process is recorded inside this box only: typing, pauses, deletions and pasted text. Nothing is uploaded. When you finish, you download a WordsPath file and hand it in with your work, so your teacher can replay how you wrote it.</div>
   </div>
 
   <div class="panel editor">
@@ -29,7 +29,7 @@
       <span class="rec" id="recLbl" hidden>Recording</span>
       <div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn" id="copyBtn" disabled>Copy text</button>
-        <button class="btn pri" id="dlBtn" disabled>Download Bakas file</button>
+        <button class="btn pri" id="dlBtn" disabled>Download WordsPath file</button>
       </div>
     </div>
     <div class="msg ok" id="dlMsg" hidden></div>
@@ -41,9 +41,9 @@
 (()=>{
 const $=s=>document.querySelector(s);
 const words=s=>(s.trim().match(/\S+/g)||[]).length;
-const KEY='bakas.draft.v1';
+const KEY='wordspath.draft.v1';
 const ta=$('#essay');
-let rec={v:1,app:'Bakas',task:'',name:'',created:Date.now(),ops:[],leaves:0,away_ms:0}, start=0, prev=[], lastType='', leftAt=0;
+let rec={v:1,app:'WordsPath',task:'',name:'',created:Date.now(),ops:[],leaves:0,away_ms:0}, start=0, prev=[], lastType='', leftAt=0;
 const params=new URLSearchParams(location.search);
 
 // restore draft
@@ -87,9 +87,9 @@ $('#dlBtn').onclick=()=>{
   rec.name=$('#sName').value.trim(); rec.task=$('#task').value.trim(); rec.finished=Date.now(); rec.text=ta.value; save();
   const blob=new Blob([JSON.stringify(rec)],{type:'application/json'});
   const safe=(rec.name+' '+(rec.task||'writing')).replace(/[^\p{L}\p{N}]+/gu,'-').replace(/^-|-$/g,'').slice(0,60)||'writing';
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`${safe}.bakas`; document.body.append(a); a.click(); a.remove();
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`${safe}.wordspath`; document.body.append(a); a.click(); a.remove();
   setTimeout(()=>URL.revokeObjectURL(a.href),4000);
-  $('#dlMsg').className='msg ok'; $('#dlMsg').textContent='Downloaded. Hand in this .bakas file together with your writing (for example, attach both to your Google Classroom assignment). You can keep editing and download again.'; $('#dlMsg').hidden=false;
+  $('#dlMsg').className='msg ok'; $('#dlMsg').textContent='Downloaded. Hand in this .wordspath file together with your writing (for example, attach both to your Google Classroom assignment). You can keep editing and download again.'; $('#dlMsg').hidden=false;
 };
 $('#resetBtn').onclick=()=>{ if(!confirm('Erase your text and its recording on this device?')) return; try{localStorage.removeItem(KEY)}catch(e){} location.href=location.pathname+(rec.task?'?task='+encodeURIComponent(rec.task):'') };
 })();

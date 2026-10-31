@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Review writing | Bakas</title>
+<title>Review writing | WordsPath</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600&family=Public+Sans:wght@400;600;700;800&display=swap">
@@ -12,13 +12,13 @@
 <body>
 <div class="wrap">
   <div class="head">
-    <a class="logo" href="/"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="3" width="20" height="26" rx="3" fill="#1F3F7A"/><path d="M9 10h10M9 15h10M9 20h6" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="23" r="6" fill="#C3303A"/><path d="M21.5 23l1.8 1.8 3.2-3.4" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div><h1>Bakas</h1><small>Review writing</small></div></a>
+    <a class="logo" href="/"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="3" width="20" height="26" rx="3" fill="#1F3F7A"/><path d="M9 10h10M9 15h10M9 20h6" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="23" r="6" fill="#C3303A"/><path d="M21.5 23l1.8 1.8 3.2-3.4" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div><h1>WordsPath</h1><small>Review writing</small></div></a>
     <a class="btn" href="/write/">Open the writing page</a>
   </div>
   <label class="drop" id="drop">
-    <b style="font-size:18px">Open students' .bakas files</b>
+    <b style="font-size:18px">Open students' .wordspath files</b>
     <span class="note">Drag files here or tap to choose. You can open many at once. Files stay on your device; nothing is uploaded.</span>
-    <input type="file" id="file" accept=".bakas,application/json" multiple hidden>
+    <input type="file" id="file" accept=".wordspath,application/json" multiple hidden>
     <span class="btn pri">Choose files</span>
   </label>
   <div class="row" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn" id="sampleBtn">Try with two sample essays</button><span class="note" id="loadMsg"></span></div>
@@ -27,7 +27,7 @@
     <div class="report" id="report"></div>
   </section>
 </div>
-<script src="/assets/bakas-core.js"></script>
+<script src="/assets/wordspath-core.js"></script>
 <script>
 (()=>{
 const $=s=>document.querySelector(s);
@@ -81,7 +81,7 @@ function extraFlags(s,a){
   if(s.mismatch) a.flags.push('The text in the file does not match its own recording. The file may have been edited.');
 }
 function addSub(d,fname){
-  if(!d||!Array.isArray(d.ops)) throw new Error('not a Bakas file');
+  if(!d||!Array.isArray(d.ops)) throw new Error('not a WordsPath file');
   const ok=d.ops.every(o=>typeof o.t==='number'&&typeof o.p==='number'&&typeof o.d==='number'&&typeof o.i==='string');
   if(!ok) throw new Error('damaged file');
   const rebuilt=build(d.ops,d.ops.length).map(c=>c.ch).join('');
