@@ -145,6 +145,7 @@ def pages():
 <h2>What DraftTrail stores</h2><p>While you write, your text, your name, the assignment name and the recording of your edits are saved in your browser's storage on your device. When you tap Download, the same information is saved into a .drafttrail file on your device. We don't receive any of it.</p>
 <h2>Teachers</h2><p>.drafttrail files opened on the review page are read inside the teacher's browser and are not uploaded.</p>
 <h2>Advertising</h2><p>The information pages may show ads from Google AdSense, which uses cookies; you can manage personalized ads in <a href="https://adssettings.google.com" rel="noopener">Google Ads Settings</a>. <b>The writing page and the review page never show ads.</b></p>
+<h2>Analytics</h2><p>We use Cloudflare Web Analytics to count page visits. It does not use cookies and does not track you across websites.</p>
 <h2>Children</h2><p>Students of all ages may use DraftTrail. We don't collect personal information from them.</p>
 <h2>Contact</h2><p><a href="mailto:{E(MAIL)}">{E(MAIL)}</a></p><p class="muted">Last updated {E(CFG["launch_date"])}.</p>''')
     prose('/terms/', 'Terms of Use', f'Terms of use for {NAME}.', f'''
