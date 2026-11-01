@@ -1,7 +1,7 @@
 {
   "site_name": "DraftTrail",
   "studio": "Telar Labs",
-  "site_url": "https://drafttrail-c4t.pages.dev",
+  "site_url": "https://drafttrail.telarlabs.net",
   "contact_email": "telarlabs@gmail.com",
   "adsense_client": "",
   "ad_slots": {
@@ -26,7 +26,7 @@
     },
     {
       "name": "DraftTrail",
-      "url": "https://drafttrail-c4t.pages.dev",
+      "url": "https://drafttrail.telarlabs.net",
       "blurb": "Free writing recorder that replays how an essay was written, step by step."
     }
   ],

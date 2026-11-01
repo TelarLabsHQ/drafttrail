@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: /write/
 Disallow: /review/
-Sitemap: https://drafttrail-c4t.pages.dev/sitemap.xml
+Sitemap: https://drafttrail.telarlabs.net/sitemap.xml
