@@ -139,7 +139,7 @@ def pages():
 <h1>About {E(NAME)}</h1><p class="lead">{E(NAME)} is a free writing-process recorder made by {E(ST)}, a small independent studio.</p>
 <p>AI tools can produce a finished essay in seconds, and AI detectors often get it wrong, sometimes accusing honest students. {E(NAME)} takes a different approach: instead of guessing from the final text, it keeps a record of how the text was written, which students can share to show their effort.</p>
 <h2>Our promises</h2><ul><li>Free, no accounts.</li><li>Recordings stay on the student's device and in the file they choose to hand in.</li><li>No ads on the writing page or the review page.</li></ul>
-<h2>Other {E(ST)} tools</h2><p><a href="https://quizpolice.pages.dev">QuizPolice</a> for monitored online quizzes, <a href="https://pizarrapad.pages.dev">PizarraPad</a>, a free whiteboard, and <a href="https://telarclips.pages.dev">Telar Clips</a>, free motion backgrounds.</p>''')
+<h2>Other {E(ST)} tools</h2><p><a href="https://quizpolice.pages.dev">QuizPolice</a> for monitored online quizzes, <a href="https://pizarrapad.telarlabs.net">PizarraPad</a>, a free whiteboard, and <a href="https://clips.telarlabs.net">Telar Clips</a>, free motion backgrounds.</p>''')
     prose('/privacy/', 'Privacy Policy', f'Privacy policy for {NAME}.', f'''
 <h1>Privacy policy</h1><p class="lead">{E(NAME)} is run by {E(ST)}. Your writing and its recording never leave your device unless you share the file yourself.</p>
 <h2>What DraftTrail stores</h2><p>While you write, your text, your name, the assignment name and the recording of your edits are saved in your browser's storage on your device. When you tap Download, the same information is saved into a .drafttrail file on your device. We don't receive any of it.</p>
