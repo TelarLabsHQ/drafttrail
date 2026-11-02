@@ -95,7 +95,7 @@ def home():
   <h1>See how the writing was made</h1>
   <p class="hero-sub">In the age of AI, the finished essay isn't enough. DraftTrail records the writing process: typing, pauses, revisions and pastes, so teachers can replay it and students can prove their work is their own.</p>
   <div class="cta"><a class="btn btn-big" href="/write/">Start writing</a><a class="btn btn-ghost btn-big" href="/review/">Review files</a></div></div>
-  <div class="mock"><div class="mrow"><b>Maria Santos</b><span class="pill p-lock">2 to review</span></div>
+  <div class="mock"><div class="mrow"><b>Emma Johnson</b><span class="pill p-lock">2 to review</span></div>
    <div class="mlist"><div><span>Pasted 76 words at 2:41</span></div><div><span>58% of the essay was pasted</span></div></div>
    <div class="mchips"><span class="c-info">212<br><small>Words</small></span><span class="c-bad">58%<br><small>Pasted</small></span><span class="c-warn">4:10<br><small>Active</small></span><span class="c-ok">1<br><small>Session</small></span></div></div>
 </div></section>
@@ -130,7 +130,7 @@ def pages():
     faq = [('Is DraftTrail free?', 'Yes, for students and teachers, with no accounts.'),
            ('Where is my writing saved?', 'In your browser on your device while you write, and in the .drafttrail file when you download it. Nothing is uploaded to us.'),
            ('Can I continue later?', 'Yes, in the same browser on the same device. Your draft and its recording are kept until you choose Start over.'),
-           ('Can I write in Filipino or other languages?', 'Yes. DraftTrail works with any language your keyboard can type, including accents and emoji.'),
+           ('Can I write in Spanish, Filipino or other languages?', 'Yes. DraftTrail works with any language your keyboard can type, including accents and emoji.'),
            ('What if I paste my own notes?', "That's fine. It shows as pasted text, and your teacher can see it was your notes. Talk with your teacher about what's allowed."),
            ('Does DraftTrail detect AI writing?', 'Not directly. It shows how the text arrived: typed with pauses and corrections, or pasted in large blocks. That is often more useful than an AI detector, which can be wrong.'),
            ('Do teachers need to upload student files?', 'No. Files open in the teacher\'s browser and are not uploaded.')]

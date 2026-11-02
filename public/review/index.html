@@ -52,27 +52,27 @@ function gen(steps,seed){
   return ops;
 }
 const maria=gen([
-  {type:'Ang pangarap ko ay maging isang nurse. Gusto ko makatulong sa mga may sakit lalo na sa probinsya namin. ',typos:.02},
+  {type:'My dream is to become a nurse. I want to help people who are sick, especially in my small town. ',typos:.02},
   {pause:95000},
-  {paste:'Ang pangarap ay nagsisilbing ilaw na gumagabay sa bawat hakbang ng ating buhay. Sa kabila ng mga pagsubok at hamon na ating hinaharap, ang matibay na determinasyon at walang sawang pagsisikap ang magdadala sa atin tungo sa tagumpay. Bilang isang kabataang Pilipino, naniniwala ako na ang edukasyon ang susi upang makamit ang aking mga minimithi at makapag-ambag sa pag-unlad ng ating bayan. Higit pa rito, mahalaga ring isaalang-alang ang kapakanan ng ating pamilya at komunidad sa bawat desisyong ating gagawin. '},
+  {paste:'Dreams serve as a guiding light that illuminates every step of our journey through life. Despite the trials and challenges we face, unwavering determination and tireless effort will lead us toward success. As a young person, I firmly believe that education is the key that unlocks the door to a brighter future, not only for ourselves but for our families and our communities. '},
   {pause:40000},
-  {paste:'Sa huli, ang tunay na tagumpay ay hindi lamang nasusukat sa narating kundi sa mga buhay na ating napabuti. '},
+  {paste:'In the end, true success is measured not only by what we achieve but by the lives we have made better. '},
   {pause:20000},
-  {type:'Kaya mag aaral ako ng mabuti para maabot ko ito.',typos:.01}
+  {type:'So I will study hard to reach my dream.',typos:.01}
 ],7);
 const rafael=gen([
-  {type:'Simula bata pa ako, gusto ko na maging inhinyero. ',typos:.05,speed:1.4,think:2},
-  {type:'Tuwing umuulan sa amin, bumabaha sa kalye at hindi kami makapasok sa eskwela. ',typos:.05,speed:1.4,think:2},
-  {type:'Naisip ko, paano kung may tulay o kanal na maayos? Doon nagsimula ang pangarap ko kasi',typos:.05,speed:1.4},
-  {backspace:5},{type:'. ',speed:1.4},
+  {type:'Ever since I was little, I wanted to be an engineer. ',typos:.05,speed:1.4,think:2},
+  {type:'Every time it rains in our town, the streets flood and we can\'t get to school. ',typos:.05,speed:1.4,think:2},
+  {type:'I started thinking, what if we had a good bridge or drain? That is where my dream started because',typos:.05,speed:1.4},
+  {backspace:7},{type:'. ',speed:1.4},
   {pause:420000},
-  {type:'Hindi madali kasi kailangan magaling sa math, at aaminin ko na nahihirapan ako minsan. ',typos:.05,speed:1.4,think:2},
-  {type:'Pero tinutulungan ako ng kuya ko tuwing gabi. ',typos:.05,speed:1.4,think:2},
-  {type:'Balang araw, gusto kong gumawa ng mga daan at tulay sa bayan namin para hindi na mahirapan ang mga bata na tulad ko. ',typos:.05,speed:1.4,think:2},
+  {type:'It is not easy because you have to be good at math, and I admit I struggle with it sometimes. ',typos:.05,speed:1.4,think:2},
+  {type:'But my older brother helps me every night. ',typos:.05,speed:1.4,think:2},
+  {type:'Someday, I want to build roads and bridges in our town so kids like me won\'t have a hard time. ',typos:.05,speed:1.4,think:2},
   {pause:60000},
-  {type:'Gusto ko ring ipakita sa mga magulang ko na sulit ang sakripisyo nila. Nagtitinda si nanay ng kakanin sa palengke at si tatay ay nagmamaneho ng tricycle. Kahit pagod sila, lagi nilang sinasabi na mag-aral ako nang mabuti. Kaya ngayon pa lang, nagbabasa na ako tungkol sa mga tulay at sinusubukan kong gumawa ng maliliit na modelo gamit ang popsicle sticks. Sana balang araw, ako naman ang tutulong sa kanila.',typos:.05,speed:1.4,think:2}
+  {type:'I also want to show my parents that their hard work was worth it. My mom works at a diner and my dad drives a delivery truck. Even when they are tired, they always tell me to keep studying. So right now, I already read about bridges and try building small ones out of popsicle sticks. ',typos:.05,speed:1.4,think:2}
 ],3);
-const SAMPLES=[{id:'s-maria',name:'Maria Santos (sample)',task:'Sanaysay: Ang Aking Pangarap',ops:maria,leaves:4,away_ms:210000,sample:true},{id:'s-rafael',name:'Rafael Cruz (sample)',task:'Sanaysay: Ang Aking Pangarap',ops:rafael,leaves:1,away_ms:15000,sample:true}];
+const SAMPLES=[{id:'s-maria',name:'Emma Johnson (sample)',task:'Essay: My Dream',ops:maria,leaves:4,away_ms:210000,sample:true},{id:'s-rafael',name:'Noah Miller (sample)',task:'Essay: My Dream',ops:rafael,leaves:1,away_ms:15000,sample:true}];
 
 
 let subs=[];
