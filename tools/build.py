@@ -113,7 +113,7 @@ def home():
 SETUP = r'''
 <h1>Set up a writing task</h1>
 <p class="lead">Choose how your students will write. Both are free, and students don't need accounts.</p>
-<style>#su [hidden]{display:none!important}</style>
+<style>#su [hidden]{display:none!important}#su .field{display:flex;flex-direction:column;gap:6px;font-weight:600}#su input#suTask,#su input#suLink{width:100%;min-height:46px;border-radius:10px;border:1px solid #c9cfdb;padding:0 12px;font:inherit;font-weight:400;box-sizing:border-box}#su{background:#fff;border:1px solid #e2e6ee;border-radius:14px;padding:18px}</style>
 <form id="su" class="panel pad" style="display:flex;flex-direction:column;gap:14px;max-width:720px">
   <label class="field"><span>Assignment</span><input id="suTask" maxlength="140" placeholder="e.g. Short answer: Why do leaves change color?" required></label>
   <fieldset style="border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px;margin:0">
