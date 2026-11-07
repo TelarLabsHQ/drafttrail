@@ -77,7 +77,8 @@ const SAMPLES=[{id:'s-maria',name:'Emma Johnson (sample)',task:'Essay: My Dream'
 
 let subs=[];
 function extraFlags(s,a){
-  if((s.leaves||0)>=5) a.flags.push(`Left the writing page ${s.leaves} times (${mmss(s.away_ms||0)} away in total)`);
+  if((s.leaves||0)>=(s.rules?1:5)) a.flags.push(`Left the writing page ${s.leaves} time${s.leaves>1?'s':''} (${mmss(s.away_ms||0)} away in total)`);
+  if(s.auto) a.flags.push('Handed in automatically when the time ran out');
   if(s.mismatch) a.flags.push('The text in the file does not match its own recording. The file may have been edited.');
 }
 function addSub(d,fname){
@@ -85,13 +86,15 @@ function addSub(d,fname){
   const ok=d.ops.every(o=>typeof o.t==='number'&&typeof o.p==='number'&&typeof o.d==='number'&&typeof o.i==='string');
   if(!ok) throw new Error('damaged file');
   const rebuilt=build(d.ops,d.ops.length).map(c=>c.ch).join('');
-  const s={id:'f'+Math.random().toString(36).slice(2),name:String(d.name||fname).slice(0,80),task:String(d.task||'').slice(0,140),ops:d.ops,leaves:d.leaves||0,away_ms:d.away_ms||0,
+  const s={id:'f'+Math.random().toString(36).slice(2),name:String(d.name||fname).slice(0,80),task:String(d.task||'').slice(0,140),ops:d.ops,leaves:d.leaves||0,away_ms:d.away_ms||0,rules:!!d.rules,auto:!!d.auto,
     when:d.finished||d.lastAt||d.created, mismatch: typeof d.text==='string' && d.text!==rebuilt};
   subs.push(s); return s;
 }
 async function openFiles(files){
   let n=0, bad=[];
-  for(const f of files){ try{ addSub(JSON.parse(await f.text()),f.name); n++ }catch(e){ bad.push(f.name) } }
+  for(const f of files){ try{ const d=JSON.parse(await f.text());
+      // a class bundle from QuizPolice holds many essays
+      if(d&&Array.isArray(d.essays)){ for(const x of d.essays){ try{ addSub(x,f.name); n++ }catch(e){} } } else { addSub(d,f.name); n++ } }catch(e){ bad.push(f.name) } }
   $('#loadMsg').textContent=`${n} file${n===1?'':'s'} opened.`+(bad.length?` Couldn't read: ${bad.join(', ')}`:'');
   if(subs.length){ sel=sel&&subs.some(x=>x.id===sel)?sel:subs[0].id; show() }
 }

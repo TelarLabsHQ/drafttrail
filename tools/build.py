@@ -60,7 +60,7 @@ def page(path, title, desc, body):
 <body>
 <header class="top"><div class="wrap top-in">
   <a class="logo" href="/">{LOGO}<span>{E(NAME)}</span></a>
-  <nav class="nav"><a href="/how-it-works/">How it works</a><a href="/for-teachers/">For teachers</a><a href="/faq/">FAQ</a></nav>
+  <nav class="nav"><a href="/how-it-works/">How it works</a><a href="/set-up/">Set up a task</a><a href="/for-teachers/">For teachers</a><a href="/faq/">FAQ</a></nav>
   <a class="btn btn-ghost btn-sm" href="/write/">Start writing</a><a class="btn btn-sm" href="/review/">Review files</a>
 </div></header>
 <main>
@@ -83,7 +83,7 @@ def prose(path, title, desc, inner): page(path, title, desc, f'<article class="w
 FEATS = [('Records how the writing happened', 'Every keystroke, pause, deletion and paste inside the DraftTrail editor, with timestamps. Not the screen, not other apps.'),
          ('Replay like a video', 'Teachers watch the essay being written from the first word, with pasted text highlighted in yellow.'),
          ('Clear signals, not accusations', 'Flags for big pastes, very few corrections, unusual speed or lots of time away, each explained in plain words.'),
-         ('Nothing is uploaded', 'The recording stays on the student\'s device until they download the .drafttrail file and hand it in.'),
+         ('Nothing is uploaded', 'The recording stays on the student\'s device until they download the .drafttrail file and hand it in. Only the optional live in-class mode (with QuizPolice) saves essays on our server, for up to 30 days.'),
          ('Works with Google Classroom', 'Students attach the .drafttrail file like any other file. Teachers open many files at once.'),
          ('Free, no accounts', 'No sign-up for students or teachers, and it works on phones, tablets and computers.')]
 
@@ -94,7 +94,7 @@ def home():
   <div><p class="eyebrow">Free · No accounts · Nothing uploaded</p>
   <h1>See how the writing was made</h1>
   <p class="hero-sub">In the age of AI, the finished essay isn't enough. DraftTrail records the writing process: typing, pauses, revisions and pastes, so teachers can replay it and students can prove their work is their own.</p>
-  <div class="cta"><a class="btn btn-big" href="/write/">Start writing</a><a class="btn btn-ghost btn-big" href="/review/">Review files</a></div></div>
+  <div class="cta"><a class="btn btn-big" href="/write/">Start writing</a><a class="btn btn-ghost btn-big" href="/set-up/">Teachers: set up a task</a><a class="btn btn-ghost btn-big" href="/review/">Review files</a></div></div>
   <div class="mock"><div class="mrow"><b>Emma Johnson</b><span class="pill p-lock">2 to review</span></div>
    <div class="mlist"><div><span>Pasted 76 words at 2:41</span></div><div><span>58% of the essay was pasted</span></div></div>
    <div class="mchips"><span class="c-info">212<br><small>Words</small></span><span class="c-bad">58%<br><small>Pasted</small></span><span class="c-warn">4:10<br><small>Active</small></span><span class="c-ok">1<br><small>Session</small></span></div></div>
@@ -110,6 +110,40 @@ def home():
     page('/', f'{NAME} – Free Writing Process Recorder for Students and Teachers',
          'DraftTrail records how an essay was written: typing, pauses, revisions and pasted text. Teachers replay it to check originality. Free, no accounts, nothing uploaded.', body)
 
+SETUP = r'''
+<h1>Set up a writing task</h1>
+<p class="lead">Choose how your students will write. Both are free, and students don't need accounts.</p>
+<form id="su" class="panel pad" style="display:flex;flex-direction:column;gap:14px;max-width:720px">
+  <label class="field"><span>Assignment</span><input id="suTask" maxlength="140" placeholder="e.g. Short answer: Why do leaves change color?" required></label>
+  <fieldset style="border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px;margin:0">
+    <legend><b>How will students write?</b></legend>
+    <label style="display:flex;gap:10px;align-items:flex-start"><input type="radio" name="mode" value="own" checked style="margin-top:5px"><span><b>On their own: homework, or class without live monitoring</b><br><span class="note">Students get a link, write, and hand in a .drafttrail file. Nothing is uploaded. You review the files afterwards.</span></span></label>
+    <label style="display:flex;gap:10px;align-items:flex-start"><input type="radio" name="mode" value="live" style="margin-top:5px"><span><b>Live in class, with QuizPolice</b><br><span class="note">Students join with a code. You see live who leaves the writing page, big pastes and word counts. You can lock after too many exits, set a timer, and download every essay at the end. Essays are saved on our server for up to 30 days.</span></span></label>
+  </fieldset>
+  <label id="suRulesRow" style="display:flex;gap:10px;align-items:center"><input type="checkbox" id="suRules" checked> <span><b>Warn students when they leave the page</b> <span class="note">(every exit is recorded in the file either way)</span></span></label>
+  <button class="btn btn-big" id="suGo">Create the student link</button>
+  <div id="suOut" hidden style="display:flex;flex-direction:column;gap:8px">
+    <b>Share this link with your students:</b>
+    <input id="suLink" readonly style="min-height:44px;border-radius:10px;border:1px solid var(--line);padding:0 12px;font:inherit">
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn" id="suCopy">Copy link</button><a class="btn btn-ghost" href="/review/">Open the review page</a></div>
+    <span class="note">Ask students to hand in the .drafttrail file with their work, for example in Google Classroom.</span>
+  </div>
+</form>
+<h2>Which should I choose?</h2>
+<ul><li><b>On their own</b> suits homework, take-home essays and schools with no reliable internet. It works offline, and nothing leaves the student's device until they hand in the file.</li>
+<li><b>Live in class</b> suits short answers and essays written during the lesson, when the rule is "no searching, no other pages". You watch the class live and collect all essays at once.</li></ul>
+<p class="note">Neither mode can see a second phone or a book on the desk. It records when a student leaves the writing page on that device. For "no other gadgets", keep an eye on the room too.</p>
+<script>
+(()=>{const $=s=>document.querySelector(s);
+const mode=()=>document.querySelector('input[name=mode]:checked').value;
+document.querySelectorAll('input[name=mode]').forEach(r=>r.onchange=()=>{const live=mode()==='live';$('#suRulesRow').hidden=live;$('#suGo').textContent=live?'Continue in QuizPolice':'Create the student link';$('#suOut').hidden=true;});
+$('#su').onsubmit=e=>{e.preventDefault();const t=$('#suTask').value.trim();if(!t){$('#suTask').focus();return}
+ if(mode()==='live'){location.href='https://quizpolice.telarlabs.net/teacher/?writing='+encodeURIComponent(t)+'#new';return}
+ const u=location.origin+'/write/?task='+encodeURIComponent(t)+($('#suRules').checked?'&rules=1':'');$('#suLink').value=u;$('#suOut').hidden=false;$('#suLink').select();};
+$('#suCopy').onclick=async()=>{try{await navigator.clipboard.writeText($('#suLink').value);$('#suCopy').textContent='Copied ✓'}catch(e){$('#suLink').select()}setTimeout(()=>$('#suCopy').textContent='Copy link',2000)};
+})();
+</script>'''
+
 def pages():
     prose('/how-it-works/', 'How DraftTrail Works', 'What DraftTrail records, what the flags mean, and what it cannot see.', f'''
 <h1>How {E(NAME)} works</h1>
@@ -121,14 +155,17 @@ def pages():
 <h2>Limits to know</h2><ul><li>A student could type out text from another source by hand. Replay often shows this as steady typing with no pauses or corrections.</li>
 <li>Tech-savvy students could try to edit a .drafttrail file. DraftTrail checks that the final text matches its recording and flags it if not.</li>
 <li>Flags are reasons to talk with the student, not proof.</li></ul>''')
+    prose('/set-up/', 'Set Up a Writing Task', 'Create a DraftTrail writing link for homework, or a live in-class writing task with exit monitoring through QuizPolice.', SETUP)
     prose('/for-teachers/', 'Using DraftTrail with Your Class', 'Step-by-step guide for teachers: assigning writing with DraftTrail and reviewing the files in Google Classroom.', f'''
 <h1>Using {E(NAME)} with your class</h1>
-<h2>1. Give students the writing link</h2><p>Share <b>{E(URL)}/write/</b>. To fill in the assignment name for them, add it to the link, for example:<br><code>{E(URL)}/write/?task=Essay%3A%20My%20Dream</code></p>
+<p class="lead"><a class="btn" href="/set-up/">Set up a writing task</a> &nbsp;Choose homework mode, or live in class with exit monitoring.</p>
+<h2>1. Give students the writing link</h2><p>Use <a href="/set-up/">Set up a writing task</a> to make the link, or share <b>{E(URL)}/write/</b>. To fill in the assignment name for them, add it to the link, for example:<br><code>{E(URL)}/write/?task=Essay%3A%20My%20Dream</code>. Add <code>&amp;rules=1</code> to warn students each time they leave the page.</p>
+<h2>Writing in class with live monitoring</h2><p>For short answers or essays written during the lesson, choose <b>Live in class</b> on the <a href="/set-up/">set-up page</a>. It opens QuizPolice, where students join with a code and write in DraftTrail. You see live who leaves the page, big pastes and word counts, can lock students after too many exits, set a timer, and download all essays as one file to open on the review page. When the time runs out, essays are handed in automatically.</p>
 <h2>2. Ask for two things</h2><p>The writing itself (copied into a doc or the assignment box) <b>and</b> the .drafttrail file from <b>Download DraftTrail file</b>. In Google Classroom, students attach the file with <b>Add or create → File</b>.</p>
 <h2>3. Review</h2><p>Download the students' .drafttrail files from Classroom (you can select several), then open <a href="/review/">the review page</a> and drag them in. Click a name to see the report and replay.</p>
 <h2>Tips</h2><ul><li>Tell students why: DraftTrail protects honest work and helps you understand their writing process.</li><li>Allow pasting of their own notes, and talk about it, rather than banning it.</li><li>Try <b>"Try with two sample essays"</b> on the review page to see what flags look like.</li></ul>''')
     faq = [('Is DraftTrail free?', 'Yes, for students and teachers, with no accounts.'),
-           ('Where is my writing saved?', 'In your browser on your device while you write, and in the .drafttrail file when you download it. Nothing is uploaded to us.'),
+           ('Where is my writing saved?', 'In your browser on your device while you write, and in the .drafttrail file when you download it. Nothing is uploaded to us, unless your teacher uses the live in-class mode with QuizPolice: then your essay is saved with the quiz and deleted after 30 days.'),
            ('Can I continue later?', 'Yes, in the same browser on the same device. Your draft and its recording are kept until you choose Start over.'),
            ('Can I write in Spanish, Filipino or other languages?', 'Yes. DraftTrail works with any language your keyboard can type, including accents and emoji.'),
            ('What if I paste my own notes?', "That's fine. It shows as pasted text, and your teacher can see it was your notes. Talk with your teacher about what's allowed."),
@@ -141,13 +178,14 @@ def pages():
 <h2>Our promises</h2><ul><li>Free, no accounts.</li><li>Recordings stay on the student's device and in the file they choose to hand in.</li><li>No ads on the writing page or the review page.</li></ul>
 <h2>Other {E(ST)} tools</h2><p><a href="https://quizpolice.telarlabs.net">QuizPolice</a> for monitored online quizzes, <a href="https://pizarrapad.telarlabs.net">PizarraPad</a>, a free whiteboard, and <a href="https://clips.telarlabs.net">Telar Clips</a>, free motion backgrounds.</p>''')
     prose('/privacy/', 'Privacy Policy', f'Privacy policy for {NAME}.', f'''
-<h1>Privacy policy</h1><p class="lead">{E(NAME)} is run by {E(ST)}. Your writing and its recording never leave your device unless you share the file yourself.</p>
+<h1>Privacy policy</h1><p class="lead">{E(NAME)} is run by {E(ST)}. Your writing and its recording never leave your device unless you share the file yourself, or your teacher uses the live in-class mode described below.</p>
 <h2>What DraftTrail stores</h2><p>While you write, your text, your name, the assignment name and the recording of your edits are saved in your browser's storage on your device. When you tap Download, the same information is saved into a .drafttrail file on your device. We don't receive any of it.</p>
+<h2>Live in-class mode (with QuizPolice)</h2><p>If your teacher sets up a live writing task, you write in DraftTrail inside QuizPolice. Your name, your essay, its recording, word counts, large pastes and times you left the page are then sent to QuizPolice so your teacher can see them during class and download them afterwards. This data is visible only to that teacher and is deleted automatically 30 days after the task was created. See the <a href="https://quizpolice.telarlabs.net/privacy/">QuizPolice privacy policy</a>.</p>
 <h2>Teachers</h2><p>.drafttrail files opened on the review page are read inside the teacher's browser and are not uploaded.</p>
 <h2>Advertising</h2><p>The information pages may show ads from Google AdSense, which uses cookies; you can manage personalized ads in <a href="https://adssettings.google.com" rel="noopener">Google Ads Settings</a>. <b>The writing page and the review page never show ads.</b></p>
 <h2>Analytics</h2><p>We use Cloudflare Web Analytics to count page visits. It does not use cookies and does not track you across websites.</p>
-<h2>Children</h2><p>Students of all ages may use DraftTrail. We don't collect personal information from them.</p>
-<h2>Contact</h2><p><a href="mailto:{E(MAIL)}">{E(MAIL)}</a></p><p class="muted">Last updated {E(CFG["launch_date"])}.</p>''')
+<h2>Children</h2><p>Students of all ages may use DraftTrail. In the normal mode we don't collect personal information from them. In the live in-class mode we collect only what the teacher needs, as described above.</p>
+<h2>Contact</h2><p><a href="mailto:{E(MAIL)}">{E(MAIL)}</a></p><p class="muted">Last updated 2026-11-07.</p>''')
     prose('/terms/', 'Terms of Use', f'Terms of use for {NAME}.', f'''
 <h1>Terms of use</h1><ul><li>{E(NAME)} is free to use for school and personal writing.</li><li>Your writing belongs to you.</li><li>Flags are signals for a conversation, not proof of misconduct; teachers should use them fairly.</li>
 <li>The service is provided as it is, without warranty. Keep your own copies of important work.</li></ul><p>Questions: <a href="mailto:{E(MAIL)}">{E(MAIL)}</a></p><p class="muted">Last updated {E(CFG["launch_date"])}.</p>''')
@@ -155,7 +193,7 @@ def pages():
 
 def extras():
     open(os.path.join(PUB, 'favicon.svg'), 'w').write(LOGO.replace('class="logo-mark" ', 'xmlns="http://www.w3.org/2000/svg" '))
-    urls = ['/', '/how-it-works/', '/for-teachers/', '/faq/', '/about/', '/privacy/', '/terms/', '/contact/']
+    urls = ['/', '/how-it-works/', '/set-up/', '/for-teachers/', '/faq/', '/about/', '/privacy/', '/terms/', '/contact/']
     open(os.path.join(PUB, 'sitemap.xml'), 'w').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'<url><loc>{URL}{u}</loc></url>\n' for u in urls) + '</urlset>\n')
     open(os.path.join(PUB, 'robots.txt'), 'w').write(f'User-agent: *\nDisallow: /write/\nDisallow: /review/\nSitemap: {URL}/sitemap.xml\n')
     if CFG['adsense_client']:

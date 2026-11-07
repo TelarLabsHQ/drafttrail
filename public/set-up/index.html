@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Set Up a Writing Task | DraftTrail</title>
+<meta name="description" content="Create a DraftTrail writing link for homework, or a live in-class writing task with exit monitoring through QuizPolice.">
+<link rel="canonical" href="https://drafttrail.telarlabs.net/set-up/">
+<meta property="og:title" content="Set Up a Writing Task | DraftTrail"><meta property="og:description" content="Create a DraftTrail writing link for homework, or a live in-class writing task with exit monitoring through QuizPolice."><meta property="og:url" content="https://drafttrail.telarlabs.net/set-up/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#1F3F7A">
+<link rel="preload" href="/assets/fonts/public-sans-400.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/assets/fonts/fonts.css">
+<link rel="stylesheet" href="/assets/site.css?v=1659d60b">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4326677240395780" crossorigin="anonymous"></script>
+</head>
+<body>
+<header class="top"><div class="wrap top-in">
+  <a class="logo" href="/"><svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="3" width="20" height="26" rx="3" fill="#1F3F7A"/><path d="M9 10h10M9 15h10M9 20h6" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="23" r="6" fill="#C3303A"/><path d="M21.5 23l1.8 1.8 3.2-3.4" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>DraftTrail</span></a>
+  <nav class="nav"><a href="/how-it-works/">How it works</a><a href="/set-up/">Set up a task</a><a href="/for-teachers/">For teachers</a><a href="/faq/">FAQ</a></nav>
+  <a class="btn btn-ghost btn-sm" href="/write/">Start writing</a><a class="btn btn-sm" href="/review/">Review files</a>
+</div></header>
+<main>
+<article class="wrap prose">
+<h1>Set up a writing task</h1>
+<p class="lead">Choose how your students will write. Both are free, and students don't need accounts.</p>
+<form id="su" class="panel pad" style="display:flex;flex-direction:column;gap:14px;max-width:720px">
+  <label class="field"><span>Assignment</span><input id="suTask" maxlength="140" placeholder="e.g. Short answer: Why do leaves change color?" required></label>
+  <fieldset style="border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px;margin:0">
+    <legend><b>How will students write?</b></legend>
+    <label style="display:flex;gap:10px;align-items:flex-start"><input type="radio" name="mode" value="own" checked style="margin-top:5px"><span><b>On their own: homework, or class without live monitoring</b><br><span class="note">Students get a link, write, and hand in a .drafttrail file. Nothing is uploaded. You review the files afterwards.</span></span></label>
+    <label style="display:flex;gap:10px;align-items:flex-start"><input type="radio" name="mode" value="live" style="margin-top:5px"><span><b>Live in class, with QuizPolice</b><br><span class="note">Students join with a code. You see live who leaves the writing page, big pastes and word counts. You can lock after too many exits, set a timer, and download every essay at the end. Essays are saved on our server for up to 30 days.</span></span></label>
+  </fieldset>
+  <label id="suRulesRow" style="display:flex;gap:10px;align-items:center"><input type="checkbox" id="suRules" checked> <span><b>Warn students when they leave the page</b> <span class="note">(every exit is recorded in the file either way)</span></span></label>
+  <button class="btn btn-big" id="suGo">Create the student link</button>
+  <div id="suOut" hidden style="display:flex;flex-direction:column;gap:8px">
+    <b>Share this link with your students:</b>
+    <input id="suLink" readonly style="min-height:44px;border-radius:10px;border:1px solid var(--line);padding:0 12px;font:inherit">
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn" id="suCopy">Copy link</button><a class="btn btn-ghost" href="/review/">Open the review page</a></div>
+    <span class="note">Ask students to hand in the .drafttrail file with their work, for example in Google Classroom.</span>
+  </div>
+</form>
+<h2>Which should I choose?</h2>
+<ul><li><b>On their own</b> suits homework, take-home essays and schools with no reliable internet. It works offline, and nothing leaves the student's device until they hand in the file.</li>
+<li><b>Live in class</b> suits short answers and essays written during the lesson, when the rule is "no searching, no other pages". You watch the class live and collect all essays at once.</li></ul>
+<p class="note">Neither mode can see a second phone or a book on the desk. It records when a student leaves the writing page on that device. For "no other gadgets", keep an eye on the room too.</p>
+<script>
+(()=>{const $=s=>document.querySelector(s);
+const mode=()=>document.querySelector('input[name=mode]:checked').value;
+document.querySelectorAll('input[name=mode]').forEach(r=>r.onchange=()=>{const live=mode()==='live';$('#suRulesRow').hidden=live;$('#suGo').textContent=live?'Continue in QuizPolice':'Create the student link';$('#suOut').hidden=true;});
+$('#su').onsubmit=e=>{e.preventDefault();const t=$('#suTask').value.trim();if(!t){$('#suTask').focus();return}
+ if(mode()==='live'){location.href='https://quizpolice.telarlabs.net/teacher/?writing='+encodeURIComponent(t)+'#new';return}
+ const u=location.origin+'/write/?task='+encodeURIComponent(t)+($('#suRules').checked?'&rules=1':'');$('#suLink').value=u;$('#suOut').hidden=false;$('#suLink').select();};
+$('#suCopy').onclick=async()=>{try{await navigator.clipboard.writeText($('#suLink').value);$('#suCopy').textContent='Copied ✓'}catch(e){$('#suLink').select()}setTimeout(()=>$('#suCopy').textContent='Copy link',2000)};
+})();
+</script></article>
+</main>
+<footer class="foot"><div class="wrap foot-in">
+  <div><a class="logo" href="/"><svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="3" width="20" height="26" rx="3" fill="#1F3F7A"/><path d="M9 10h10M9 15h10M9 20h6" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="23" r="6" fill="#C3303A"/><path d="M21.5 23l1.8 1.8 3.2-3.4" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>DraftTrail</span></a><p class="muted">Free writing-process recorder for students and teachers. Part of the Telar Labs teacher tools.</p></div>
+  <div class="foot-cols">
+    <div><h4>Use it</h4><a href="/write/">Start writing</a><a href="/review/">Review .drafttrail files</a><a href="/how-it-works/">How it works</a><a href="/for-teachers/">For teachers</a><a href="/faq/">FAQ</a></div>
+    <div><h4>Telar Labs</h4><a href="/about/">About</a><a href="/privacy/">Privacy policy</a><a href="/terms/">Terms of use</a><a href="/contact/">Contact</a></div>
+  </div>
+</div><div class="wrap family"><span class="family-h"><a href="https://telarlabs.net">More from Telar Labs</a>:</span><a class="app-telarclips" href="https://clips.telarlabs.net" title="Free motion backgrounds and illustrated scenes for class videos, greetings and school programs.">Telar Clips</a><a class="app-pizarrapad" href="https://pizarrapad.telarlabs.net" title="Free online whiteboard, blackboard and greenboard for the classroom projector.">PizarraPad</a><a class="app-quizpolice" href="https://quizpolice.telarlabs.net" title="Free quiz monitor that shows you when students leave an online quiz.">QuizPolice</a></div><div class="wrap fine">&copy; 2026 Telar Labs.</div></footer>
+</body>
+</html>

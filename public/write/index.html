@@ -8,6 +8,14 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/public-sans-400.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/assets/fonts/fonts.css">
 <link rel="stylesheet" href="/assets/app.css">
+<style>
+.ov{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:16px;background:rgba(15,20,32,.6)}
+.ovbox{max-width:440px;width:100%;padding:24px;display:flex;flex-direction:column;gap:12px;text-align:center;align-items:center}
+.ovbox .big{font-size:44px;font-weight:800;color:#C3303A;line-height:1}
+.rules{background:#fff4e5;color:#7a4b00;border-radius:10px;padding:10px 12px;font-weight:600}
+body.embed .head,body.embed .task,body.embed #dlBtn,body.embed #copyBtn,body.embed .after,body.embed details{display:none!important}
+body.embed .wrap{padding-top:8px}
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -18,6 +26,7 @@
 
   <div class="panel task">
     <label class="field"><span>Assignment</span><input id="task" maxlength="140" placeholder="e.g. Essay: My Dream"></label>
+    <div class="rules" id="rulesNote" hidden>Stay on this page while you write. Leaving it (switching tabs or apps, or clicking outside this window) is recorded in your DraftTrail file, with how long you were away.</div>
     <div class="consent">Your writing process is recorded inside this box only: typing, pauses, deletions and pasted text. Nothing is uploaded. When you finish, you download a DraftTrail file and hand it in with your work, so your teacher can replay how you wrote it.</div>
   </div>
 
@@ -30,13 +39,21 @@
       <div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn" id="copyBtn" disabled>Copy text</button>
         <button class="btn pri" id="dlBtn" disabled>Download DraftTrail file</button>
+        <button class="btn pri" id="subBtn" hidden disabled>Hand in my writing</button>
       </div>
     </div>
     <div class="msg ok" id="dlMsg" hidden></div>
     <details class="note"><summary>Start over</summary><p>This erases your text and its recording on this device.</p><button class="btn" id="resetBtn">Erase and start over</button></details>
   </div>
-  <p class="note">Your work saves on this device as you type, so you can close the page and continue later in the same browser.</p>
+  <p class="note after">Your work saves on this device as you type, so you can close the page and continue later in the same browser.</p>
 </div>
+<div class="ov" id="leftOv" hidden><div class="panel ovbox" role="alertdialog" aria-labelledby="lT">
+  <div class="big" id="lNum">1</div><h2 id="lT" style="margin:0">You left the writing page</h2>
+  <p style="margin:0" class="note">This is recorded in your DraftTrail file, and your teacher will see it.</p>
+  <button class="btn pri" id="lOk" style="height:46px;min-width:180px">Back to writing</button></div></div>
+<div class="ov" id="subOv" hidden><div class="panel ovbox" role="alertdialog">
+  <h2 style="margin:0">Hand in your writing?</h2><p class="note" style="margin:0">After this you can't change it.</p>
+  <button class="btn pri" id="subYes" style="height:46px;min-width:200px">Yes, hand it in</button><button class="btn" id="subNo" style="height:46px;min-width:200px">Keep writing</button></div></div>
 <script>
 (()=>{
 const $=s=>document.querySelector(s);
@@ -45,10 +62,19 @@ const KEY='drafttrail.draft.v1';
 const ta=$('#essay');
 let rec={v:1,app:'DraftTrail',task:'',name:'',created:Date.now(),ops:[],leaves:0,away_ms:0}, start=0, prev=[], lastType='', leftAt=0;
 const params=new URLSearchParams(location.search);
+// Modes: ?rules=1 (teacher asked for exit warnings) · ?embed=1&s=CODE&n=NAME&po=ORIGIN (live in class, inside QuizPolice)
+const EMBED=params.get('embed')==='1', RULES=EMBED||params.get('rules')==='1', PO=params.get('po')||'';
+if(EMBED){ document.body.classList.add('embed'); }
+const KEY0=KEY+(EMBED?'.class.'+(params.get('s')||'')+'.'+(params.get('n')||''):'');
+let handedIn=false, progT=0;
+const post=m=>{ if(EMBED&&PO) try{ parent.postMessage({src:'drafttrail',...m},PO) }catch(e){} };
 
 // restore draft
-try{ const d=JSON.parse(localStorage.getItem(KEY)); if(d&&Array.isArray(d.ops)){ rec=d; } }catch(e){}
+try{ const d=JSON.parse(localStorage.getItem(KEY0)); if(d&&Array.isArray(d.ops)){ rec=d; } }catch(e){}
 if(params.get('task')&&!rec.ops.length) rec.task=params.get('task').slice(0,140);
+if(EMBED&&params.get('n')&&!rec.name) rec.name=params.get('n').slice(0,80);
+if(RULES){ rec.rules=true; $('#rulesNote').hidden=EMBED; }
+if(EMBED){ $('#subBtn').hidden=false; $('#sName').closest('label').hidden=true; }
 $('#task').value=rec.task||''; $('#sName').value=rec.name||'';
 if(rec.ops.length){ ta.value=rebuild(); prev=Array.from(ta.value); }
 // timestamps continue from where the draft stopped (time between sessions is kept as a gap)
@@ -59,10 +85,12 @@ update();
 
 function rebuild(){ const a=[]; for(const o of rec.ops) a.splice(o.p,o.d,...Array.from(o.i)); return a.join('') }
 let saveT=0;
-function saveNow(){ clearTimeout(saveT); rec.lastAt=Date.now(); try{ localStorage.setItem(KEY,JSON.stringify(rec)); $('#saved').textContent='Saved on this device' }catch(e){ $('#saved').textContent='Could not save (storage full?)' } }
+function saveNow(){ clearTimeout(saveT); rec.lastAt=Date.now(); try{ localStorage.setItem(KEY0,JSON.stringify(rec)); $('#saved').textContent='Saved on this device' }catch(e){ $('#saved').textContent='Could not save (storage full?)' } }
 function save(){ clearTimeout(saveT); saveT=setTimeout(saveNow,300) }
 addEventListener('pagehide',saveNow);
-function update(){ const w=words(ta.value); $('#wc').textContent=`${w} word${w===1?'':'s'}`; $('#dlBtn').disabled=w<1; $('#copyBtn').disabled=w<1; $('#recLbl').hidden=!rec.ops.length }
+function pasted(){ return rec.ops.filter(o=>o.k==='paste').reduce((n,o)=>n+words(o.i),0) }
+function update(){ const w=words(ta.value); $('#wc').textContent=`${w} word${w===1?'':'s'}`; $('#dlBtn').disabled=w<1; $('#copyBtn').disabled=w<1; $('#subBtn').disabled=w<1||handedIn; $('#recLbl').hidden=!rec.ops.length;
+  if(EMBED){ clearTimeout(progT); progT=setTimeout(()=>post({type:'progress',words:w,pasted:pasted()}),1500); } }
 
 ta.addEventListener('beforeinput',e=>{ lastType=e.inputType||'' });
 ta.addEventListener('input',()=>{
@@ -73,13 +101,30 @@ ta.addEventListener('input',()=>{
   if(!d&&!ins) return;
   const k=/insertFromPaste|insertFromDrop|insertReplacementText/.test(lastType)||ins.length>40?'paste':'type';
   rec.ops.push({t:now(),p,d,i:ins,k}); prev=nv; lastType='';
+  if(k==='paste'&&words(ins)>=15) post({type:'paste',words:words(ins)});
   update(); save();
 });
 $('#task').addEventListener('input',()=>{rec.task=$('#task').value; save()});
 $('#sName').addEventListener('input',()=>{rec.name=$('#sName').value; save()});
-// leaving the page while writing
-document.addEventListener('visibilitychange',()=>{ if(!rec.ops.length) return;
-  if(document.hidden){ leftAt=Date.now(); rec.leaves=(rec.leaves||0)+1 } else if(leftAt){ rec.away_ms=(rec.away_ms||0)+(Date.now()-leftAt); leftAt=0 } save() });
+// leaving the page while writing (tab/app switch; with rules, also clicking outside the window)
+rec.exits=rec.exits||[];
+function goneAway(how){ if(leftAt||handedIn) return; if(!rec.ops.length&&!RULES) return; leftAt=Date.now(); rec.leaves=(rec.leaves||0)+1; rec.exits.push({t:now(),how}); save() }
+function cameBack(){ if(!leftAt) return; const ms=Date.now()-leftAt; leftAt=0; rec.away_ms=(rec.away_ms||0)+ms; const x=rec.exits[rec.exits.length-1]; if(x) x.ms=ms; save();
+  if(RULES&&!EMBED){ $('#lNum').textContent=rec.leaves; $('#leftOv').hidden=false; } }
+document.addEventListener('visibilitychange',()=>{ document.hidden?goneAway('switched tab or app'):cameBack() });
+if(RULES&&!EMBED){ addEventListener('blur',()=>setTimeout(()=>{ if(!document.hasFocus()) goneAway('clicked outside the page') },0)); addEventListener('focus',cameBack); }
+$('#lOk').onclick=()=>{ $('#leftOv').hidden=true; ta.focus() };
+// in class: QuizPolice can ask for the writing (time's up) or the student hands it in
+function handIn(auto){ if(handedIn) return; handedIn=true; rec.task=$('#task').value.trim()||rec.task; rec.finished=Date.now(); rec.text=ta.value; rec.auto=!!auto; saveNow();
+  post({type:'submit',rec,auto:!!auto}); ta.readOnly=true; update(); }
+$('#subBtn').onclick=()=>{ $('#subOv').hidden=false };
+$('#subNo').onclick=()=>{ $('#subOv').hidden=true; ta.focus() };
+$('#subYes').onclick=()=>{ $('#subOv').hidden=true; handIn(false) };
+addEventListener('message',e=>{ if(!EMBED||e.origin!==PO||!e.data||e.data.src!=='quizpolice') return;
+  if(e.data.type==='collect') handIn(true);
+  if(e.data.type==='snapshot'){ rec.text=ta.value; post({type:'snapshot',rec}); }
+  if(e.data.type==='reopen'){ handedIn=false; ta.readOnly=false; update(); } });
+if(EMBED) post({type:'ready',words:words(ta.value),pasted:pasted()});
 
 $('#copyBtn').onclick=async()=>{ try{ await navigator.clipboard.writeText(ta.value); $('#copyBtn').textContent='Copied ✓' }catch(e){ ta.select(); document.execCommand('copy'); $('#copyBtn').textContent='Copied ✓' } setTimeout(()=>$('#copyBtn').textContent='Copy text',2000) };
 $('#dlBtn').onclick=()=>{
@@ -91,7 +136,7 @@ $('#dlBtn').onclick=()=>{
   setTimeout(()=>URL.revokeObjectURL(a.href),4000);
   $('#dlMsg').className='msg ok'; $('#dlMsg').textContent='Downloaded. Hand in this .drafttrail file together with your writing (for example, attach both to your Google Classroom assignment). You can keep editing and download again.'; $('#dlMsg').hidden=false;
 };
-$('#resetBtn').onclick=()=>{ if(!confirm('Erase your text and its recording on this device?')) return; try{localStorage.removeItem(KEY)}catch(e){} location.href=location.pathname+(rec.task?'?task='+encodeURIComponent(rec.task):'') };
+$('#resetBtn').onclick=()=>{ if(!confirm('Erase your text and its recording on this device?')) return; try{localStorage.removeItem(KEY0)}catch(e){} location.href=location.pathname+(rec.task?'?task='+encodeURIComponent(rec.task):'') };
 })();
 </script>
 </body>
