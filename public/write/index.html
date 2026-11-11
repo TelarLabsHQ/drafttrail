@@ -10,10 +10,48 @@
 <link rel="stylesheet" href="/assets/app.css">
 <style>
 .ov{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:16px;background:rgba(15,20,32,.6)}
+.ov[hidden]{display:none}
 .ovbox{max-width:440px;width:100%;padding:24px;display:flex;flex-direction:column;gap:12px;text-align:center;align-items:center}
 .ovbox .big{font-size:44px;font-weight:800;color:#C3303A;line-height:1}
+.dlg{max-width:620px;width:100%;max-height:calc(100vh - 32px);overflow:auto;padding:20px;display:flex;flex-direction:column;gap:12px;text-align:left}
+.dlg h2{margin:0;font-size:20px}
+.dlg .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dlg .acts{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;position:sticky;bottom:-20px;background:var(--panel);padding:10px 0 2px}
 .rules{background:#fff4e5;color:#7a4b00;border-radius:10px;padding:10px 12px;font-weight:600}
-body.embed .head,body.embed .task,body.embed #dlBtn,body.embed #copyBtn,body.embed .after,body.embed details{display:none!important}
+body:not(.embed) .wrap{max-width:1280px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start}
+@media (min-width:1000px){.layout{grid-template-columns:minmax(0,1fr) 380px}.tools{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto}}
+#essay{min-height:55vh}
+.tbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.tbar .btn{height:38px;padding:0 12px}
+.goal{display:flex;align-items:center;gap:8px;font-size:14px}
+.goal .bar{width:120px;height:8px;border-radius:5px;background:var(--grid);overflow:hidden}
+.goal .bar i{display:block;height:100%;background:var(--ok);width:0}
+.tools{padding:0;display:flex;flex-direction:column}
+.tabs{display:flex;border-bottom:1px solid var(--line)}
+.tabs button{flex:1;height:46px;border:0;background:none;font:inherit;font-weight:700;color:var(--muted);border-bottom:3px solid transparent;cursor:pointer}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--ink)}
+.tpane{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.tpane[hidden]{display:none}
+.src{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.src .k{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:var(--muted)}
+.src .acts{display:flex;gap:6px;flex-wrap:wrap}.src .acts .btn{height:32px;padding:0 10px;font-size:13px}
+.outl button{display:flex;justify-content:space-between;gap:10px;width:100%;text-align:left;border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:var(--panel);font:inherit;cursor:pointer;margin-bottom:6px}
+.outl button span:last-child{color:var(--muted);font-size:13px;white-space:nowrap}
+.qbar{position:fixed;z-index:25;left:50%;transform:translateX(-50%);bottom:16px;width:min(680px,calc(100vw - 24px));box-shadow:0 10px 30px rgba(0,0,0,.25);border:2px solid #E0B341;background:#fff8e1;color:#5a4300;border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.qbar[hidden]{display:none}
+.qbar .r{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.qbar select,.qbar input{background:#fff;color:#18202C}
+.cfg{font-size:14px;background:var(--grid);border-radius:10px;padding:8px 12px}
+.paper{font-family:"Times New Roman",Georgia,serif;font-size:17px;line-height:1.75;color:#111;background:#fff;padding:32px 40px;border-radius:6px}
+.paper h1{text-align:center;font-size:20px;margin:0 0 4px}.paper .p-name{text-align:center;margin:0 0 24px}
+.paper h2{font-size:17px;margin:18px 0 4px}.paper h2.p-sec{text-align:center;margin-top:32px}
+.paper p{margin:0;text-indent:2em}.paper blockquote{margin:8px 0 12px 2em;line-height:1.4}
+.paper sup{font-size:.7em}.paper .p-notes{font-size:14px;line-height:1.4;padding-left:1.6em}.paper .p-notes li{margin-bottom:6px}
+.paper .p-bib{text-indent:-2em;padding-left:2em;line-height:1.4;margin-bottom:10px}
+.paper .p-bad{background:#ffd6d6;color:#8a0000}
+@media (max-width:560px){.paper{padding:18px 16px}.dlg .row2{grid-template-columns:1fr}}
+body.embed .head,body.embed .task,body.embed #dlBtn,body.embed #copyBtn,body.embed #wordBtn,body.embed .after,body.embed details,body.embed .tools,body.embed .tbar,body.embed .cfg{display:none!important}
 body.embed .wrap{padding-top:8px}
 </style>
 </head>
@@ -25,28 +63,70 @@ body.embed .wrap{padding-top:8px}
   </div>
 
   <div class="panel task">
-    <label class="field"><span>Assignment</span><input id="task" maxlength="140" placeholder="e.g. Essay: My Dream"></label>
+    <label class="field"><span>Assignment</span><input id="task" maxlength="140" placeholder="e.g. Term paper: The River Towns"></label>
+    <div class="cfg" id="cfgNote" hidden></div>
     <div class="rules" id="rulesNote" hidden>Stay on this page while you write. Leaving it (switching tabs or apps, or clicking outside this window) is recorded in your DraftTrail file, with how long you were away.</div>
     <div class="consent">Your writing process is recorded inside this box only: typing, pauses, deletions and pasted text. Nothing is uploaded. When you finish, you download a DraftTrail file and hand it in with your work, so your teacher can replay how you wrote it.</div>
   </div>
 
+  <div class="layout">
   <div class="panel editor">
     <label class="field"><span>Your name</span><input id="sName" autocomplete="name" maxlength="80"></label>
+    <div class="tbar">
+      <button class="btn" id="citeBtn" title="Insert a citation where the cursor is">❝ Cite a source</button>
+      <button class="btn" id="headBtn" title="Start a new section">＃ Add a section heading</button>
+      <button class="btn" id="prevBtn">Preview paper</button>
+      <span class="note" style="font-size:13px">Tip: put *stars* around a book title to make it italic.</span>
+    </div>
     <textarea id="essay" placeholder="Start writing here…" aria-label="Your writing" spellcheck="true"></textarea>
+    <div class="qbar" id="qbar" hidden>
+      <b id="qTitle">You pasted text. Is it a quote from one of your sources?</b>
+      <span style="font-size:14px">Mark it as a quote so it gets quotation marks and a citation. Your teacher will see it as a cited quote, not as copied text.</span>
+      <div class="r"><select id="qSrc" aria-label="Source"></select><input id="qPg" placeholder="Page (e.g. 45)" style="width:140px;height:40px" aria-label="Page"></div>
+      <div class="r"><button class="btn pri" id="qYes">Mark as quote and cite</button><button class="btn" id="qNo">It's not a quote</button></div>
+    </div>
     <div class="ebar">
-      <span><span class="wc" id="wc">0 words</span></span>
+      <span style="display:flex;align-items:center;gap:14px;flex-wrap:wrap"><span class="wc" id="wc">0 words</span>
+        <span class="goal" id="goal" hidden><span class="bar"><i id="goalBar"></i></span><span id="goalTxt"></span></span></span>
       <span class="rec" id="recLbl" hidden>Recording</span>
       <div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn" id="copyBtn" disabled>Copy text</button>
+        <button class="btn" id="wordBtn" disabled>Download Word (.docx)</button>
         <button class="btn pri" id="dlBtn" disabled>Download DraftTrail file</button>
         <button class="btn pri" id="subBtn" hidden disabled>Hand in my writing</button>
       </div>
     </div>
     <div class="msg ok" id="dlMsg" hidden></div>
+    <details class="note"><summary>Continue on another computer</summary>
+      <p>Download your DraftTrail file here, then open this page on the other computer and choose the file. Your writing and its whole recording continue from where you stopped.</p>
+      <label class="btn" style="display:inline-flex;align-items:center;cursor:pointer">Continue from a DraftTrail file<input type="file" id="resumeFile" accept=".drafttrail,application/json" hidden></label>
+      <p class="msg bad" id="resumeMsg" hidden></p></details>
     <details class="note"><summary>Start over</summary><p>This erases your text and its recording on this device.</p><button class="btn" id="resetBtn">Erase and start over</button></details>
   </div>
-  <p class="note after">Your work saves on this device as you type, so you can close the page and continue later in the same browser.</p>
+
+  <div class="panel tools">
+    <div class="tabs" role="tablist"><button role="tab" aria-selected="true" data-t="outline">Sections</button><button role="tab" aria-selected="false" data-t="sources">Sources <span id="srcN"></span></button></div>
+    <div class="tpane" id="t-outline">
+      <div class="outl" id="outline"></div>
+      <div id="suggest"></div>
+      <label class="field"><span>Word goal</span><input id="goalIn" type="number" min="0" step="50" placeholder="e.g. 3000"></label>
+      <span class="note">The word count leaves out headings, citations, notes and the bibliography.</span>
+    </div>
+    <div class="tpane" id="t-sources" hidden>
+      <label class="field"><span>Citation style</span><select id="style"></select></label>
+      <span class="note" id="styleNote"></span>
+      <button class="btn pri" id="addSrc">+ Add a source</button>
+      <div id="srcList" style="display:flex;flex-direction:column;gap:8px"></div>
+      <details class="note"><summary>How citing works</summary>
+        <p>Add each source once. Then put the cursor where the citation belongs and press <b>Cite a source</b>. DraftTrail writes a short code like <code>[@smith2019, 45]</code> in your text, and turns it into a footnote or an in-text citation in the preview and the Word file.</p>
+        <p>The first footnote for a source is the full note; later ones are the short form. The notes, numbers and the bibliography update by themselves when you move text.</p>
+        <p>Check the finished list against your teacher's guide. DraftTrail formats sources but cannot check that they are real.</p></details>
+    </div>
+  </div>
+  </div>
+  <p class="note after">Your work saves on this device as you type, so you can close the page and continue later in the same browser. To switch computers, use “Continue on another computer”.</p>
 </div>
+
 <div class="ov" id="leftOv" hidden><div class="panel ovbox" role="alertdialog" aria-labelledby="lT">
   <div class="big" id="lNum">1</div><h2 id="lT" style="margin:0">You left the writing page</h2>
   <p style="margin:0" class="note">This is recorded in your DraftTrail file, and your teacher will see it.</p>
@@ -54,65 +134,144 @@ body.embed .wrap{padding-top:8px}
 <div class="ov" id="subOv" hidden><div class="panel ovbox" role="alertdialog">
   <h2 style="margin:0">Hand in your writing?</h2><p class="note" style="margin:0">After this you can't change it.</p>
   <button class="btn pri" id="subYes" style="height:46px;min-width:200px">Yes, hand it in</button><button class="btn" id="subNo" style="height:46px;min-width:200px">Keep writing</button></div></div>
+
+<div class="ov" id="srcOv" hidden><form class="panel dlg" id="srcForm">
+  <h2 id="srcHead">Add a source</h2>
+  <label class="field"><span>Type of source</span><select id="fType"></select></label>
+  <div id="fFields" style="display:flex;flex-direction:column;gap:10px"></div>
+  <div class="msg bad" id="srcErr" hidden></div>
+  <div class="acts"><button type="button" class="btn" id="srcCancel">Cancel</button><button class="btn pri" id="srcSave">Save source</button></div>
+</form></div>
+
+<div class="ov" id="citeOv" hidden><div class="panel dlg">
+  <h2>Cite a source</h2>
+  <div id="citeList" style="display:flex;flex-direction:column;gap:6px"></div>
+  <label class="field"><span>Page or pages (optional)</span><input id="citePg" placeholder="e.g. 45 or 45-47"></label>
+  <div class="acts"><button class="btn" id="citeNew">+ New source</button><button class="btn" id="citeCancel">Cancel</button><button class="btn pri" id="citeGo" disabled>Insert citation</button></div>
+</div></div>
+
+<div class="ov" id="headOv" hidden><form class="panel dlg" id="headForm">
+  <h2>Add a section heading</h2>
+  <label class="field"><span>Heading</span><input id="headIn" maxlength="120" placeholder="e.g. Background" required></label>
+  <span class="note">It goes on its own line where the cursor is. In your text it starts with “# ”.</span>
+  <div class="acts"><button type="button" class="btn" id="headCancel">Cancel</button><button class="btn pri">Add heading</button></div>
+</form></div>
+
+<div class="ov" id="prevOv" hidden><div class="panel dlg" style="max-width:860px">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h2>Preview</h2>
+    <span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn pri" id="prevWord">Download Word (.docx)</button><button class="btn" id="prevClose">Close</button></span></div>
+  <label class="field"><span>Title of your paper</span><input id="pTitle" maxlength="200" placeholder="e.g. Trade and the River Towns, 1850–1900"></label>
+  <div class="msg bad" id="prevWarn" hidden></div>
+  <div id="prevBody"></div>
+</div></div>
+
+<script src="/assets/cite.js?v=20261111"></script>
 <script>
-(()=>{
+(async()=>{
 const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const words=s=>(s.trim().match(/\S+/g)||[]).length;
+// words of the paper itself: no headings, no citation codes, no quote markers
+const bodyWords=s=>words(s.split('\n').filter(l=>!/^\s*#{1,3}\s/.test(l)).join('\n').replace(Cite.TOKEN,' ').replace(/^\s*>\s?/gm,'').replace(/\*/g,''));
 const KEY='drafttrail.draft.v1';
 const ta=$('#essay');
-let rec={v:1,app:'DraftTrail',task:'',name:'',created:Date.now(),ops:[],leaves:0,away_ms:0}, start=0, prev=[], lastType='', leftAt=0;
+let rec={v:2,app:'DraftTrail',task:'',name:'',created:Date.now(),ops:[],leaves:0,away_ms:0,sources:[],cfg:{}}, start=0, prev=[], lastType='', leftAt=0, forced='', clip='';
 const params=new URLSearchParams(location.search);
 // Modes: ?rules=1 (teacher asked for exit warnings) · ?embed=1&s=CODE&n=NAME&po=ORIGIN (live in class, inside QuizPolice)
+// Teacher options: ?style=cmos-nb|cmos-ad|apa|mla · ?words=3000 · ?sections=Introduction|Background|…
 const EMBED=params.get('embed')==='1', RULES=EMBED||params.get('rules')==='1', PO=params.get('po')||'';
 if(EMBED){ document.body.classList.add('embed'); }
 const KEY0=KEY+(EMBED?'.class.'+(params.get('s')||'')+'.'+(params.get('n')||''):'');
 let handedIn=false, progT=0;
 const post=m=>{ if(EMBED&&PO) try{ parent.postMessage({src:'drafttrail',...m},PO) }catch(e){} };
 
-// restore draft
-try{ const d=JSON.parse(localStorage.getItem(KEY0)); if(d&&Array.isArray(d.ops)){ rec=d; } }catch(e){}
+/* ---------- storage: IndexedDB (room for long papers), localStorage as fallback ---------- */
+const IDB={db:null,
+  open(){ return this.db||(this.db=new Promise((res,rej)=>{ try{ const r=indexedDB.open('drafttrail',1); r.onupgradeneeded=()=>r.result.createObjectStore('drafts'); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error) }catch(e){rej(e)} })) },
+  async get(k){ const db=await this.open(); return new Promise((res,rej)=>{ const q=db.transaction('drafts').objectStore('drafts').get(k); q.onsuccess=()=>res(q.result); q.onerror=()=>rej(q.error) }) },
+  async put(k,v){ const db=await this.open(); return new Promise((res,rej)=>{ const tx=db.transaction('drafts','readwrite'); tx.objectStore('drafts').put(v,k); tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error) }) },
+  async del(k){ const db=await this.open(); return new Promise(res=>{ const tx=db.transaction('drafts','readwrite'); tx.objectStore('drafts').delete(k); tx.oncomplete=()=>res(); tx.onerror=()=>res() }) }};
+let useIDB=true;
+async function load(){
+  let d=null, l=null;
+  try{ d=await IDB.get(KEY0) }catch(e){ useIDB=false }
+  try{ l=JSON.parse(localStorage.getItem(KEY0)) }catch(e){}
+  if(l&&Array.isArray(l.ops)&&(!d||(l.lastAt||0)>(d.lastAt||0))) d=l;   // the quick backup written while closing is newer
+  return d&&Array.isArray(d.ops)?d:null;
+}
+try{ navigator.storage&&navigator.storage.persist&&navigator.storage.persist() }catch(e){}
+
+const d0=await load(); if(d0) rec=d0;
+rec.sources=rec.sources||[]; rec.cfg=rec.cfg||{};
 if(params.get('task')&&!rec.ops.length) rec.task=params.get('task').slice(0,140);
 if(EMBED&&params.get('n')&&!rec.name) rec.name=params.get('n').slice(0,80);
+// teacher settings from the link
+if(Cite.STYLES[params.get('style')]){ rec.cfg.style=params.get('style'); rec.cfg.styleSet=true; }
+if(parseInt(params.get('words'))>0){ rec.cfg.words=Math.min(100000,parseInt(params.get('words'))); rec.cfg.wordsSet=true; }
+if(params.get('sections')) rec.cfg.sections=params.get('sections').split('|').map(s=>s.trim().slice(0,120)).filter(Boolean).slice(0,20);
+rec.cfg.style=rec.cfg.style||'cmos-nb';
 if(RULES){ rec.rules=true; $('#rulesNote').hidden=EMBED; }
 if(EMBED){ $('#subBtn').hidden=false; $('#sName').closest('label').hidden=true; }
-$('#task').value=rec.task||''; $('#sName').value=rec.name||'';
+$('#task').value=rec.task||''; $('#sName').value=rec.name||''; $('#pTitle').value=rec.title||'';
 if(rec.ops.length){ ta.value=rebuild(); prev=Array.from(ta.value); }
 // timestamps continue from where the draft stopped (time between sessions is kept as a gap)
-const resumeGap=rec.ops.length?Math.max(0,Date.now()-(rec.lastAt||Date.now())):0;
+let resumeGap=rec.ops.length?Math.max(0,Date.now()-(rec.lastAt||Date.now())):0;
 const base=()=>rec.ops.length?rec.ops[rec.ops.length-1].t+0:0;
 function now(){ if(!start){ start=performance.now()-(base()+resumeGap); } return Math.round(performance.now()-start) }
-update();
 
 function rebuild(){ const a=[]; for(const o of rec.ops) a.splice(o.p,o.d,...Array.from(o.i)); return a.join('') }
-let saveT=0;
-function saveNow(){ clearTimeout(saveT); rec.lastAt=Date.now(); try{ localStorage.setItem(KEY0,JSON.stringify(rec)); $('#saved').textContent='Saved on this device' }catch(e){ $('#saved').textContent='Could not save (storage full?)' } }
-function save(){ clearTimeout(saveT); saveT=setTimeout(saveNow,300) }
-addEventListener('pagehide',saveNow);
+let saveT=0, saving=null;
+async function saveNow(){ clearTimeout(saveT); saveT=0; rec.lastAt=Date.now();
+  try{ if(!useIDB) throw 0; await IDB.put(KEY0,rec); try{localStorage.removeItem(KEY0)}catch(e){} $('#saved').textContent='Saved on this device' }
+  catch(e){ try{ localStorage.setItem(KEY0,JSON.stringify(rec)); $('#saved').textContent='Saved on this device' }catch(e2){ $('#saved').textContent='Could not save (storage full?). Download your DraftTrail file now.' } } }
+function save(){ clearTimeout(saveT); saveT=setTimeout(saveNow,400) }
+// closing the page: IndexedDB may not finish in time, so also keep a quick copy (when it fits)
+function quickBackup(){ if(!saveT&&rec.lastAt) return; rec.lastAt=Date.now(); try{ localStorage.setItem(KEY0,JSON.stringify(rec)) }catch(e){} saveNow() }
+addEventListener('pagehide',quickBackup);
+addEventListener('beforeunload',quickBackup);
+document.addEventListener('visibilitychange',()=>{ if(document.hidden) quickBackup() });
 function pasted(){ return rec.ops.filter(o=>o.k==='paste').reduce((n,o)=>n+words(o.i),0) }
-function update(){ const w=words(ta.value); $('#wc').textContent=`${w} word${w===1?'':'s'}`; $('#dlBtn').disabled=w<1; $('#copyBtn').disabled=w<1; $('#subBtn').disabled=w<1||handedIn; $('#recLbl').hidden=!rec.ops.length;
+function update(){ const w=bodyWords(ta.value); $('#wc').textContent=`${w.toLocaleString()} word${w===1?'':'s'}`;
+  $('#dlBtn').disabled=w<1; $('#copyBtn').disabled=w<1; $('#wordBtn').disabled=w<1; $('#subBtn').disabled=w<1||handedIn; $('#recLbl').hidden=!rec.ops.length;
+  const g=rec.cfg.words||0; $('#goal').hidden=!g; if(g){ $('#goalBar').style.width=Math.min(100,w/g*100)+'%'; $('#goalTxt').textContent=`${Math.min(100,Math.round(w/g*100))}% of ${g.toLocaleString()}`; }
+  outline();
   if(EMBED){ clearTimeout(progT); progT=setTimeout(()=>post({type:'progress',words:w,pasted:pasted()}),1500); } }
 
+/* ---------- recording ---------- */
 ta.addEventListener('beforeinput',e=>{ lastType=e.inputType||'' });
-ta.addEventListener('input',()=>{
+ta.addEventListener('copy',()=>{ clip=ta.value.slice(ta.selectionStart,ta.selectionEnd) });
+ta.addEventListener('cut',()=>{ clip=ta.value.slice(ta.selectionStart,ta.selectionEnd) });
+function record(){
   const nv=Array.from(ta.value), ov=prev;
   let p=0; while(p<ov.length&&p<nv.length&&ov[p]===nv[p]) p++;
   let s=0; while(s<ov.length-p&&s<nv.length-p&&ov[ov.length-1-s]===nv[nv.length-1-s]) s++;
   const d=ov.length-p-s, ins=nv.slice(p,nv.length-s).join('');
-  if(!d&&!ins) return;
-  const k=/insertFromPaste|insertFromDrop|insertReplacementText/.test(lastType)||ins.length>40?'paste':'type';
-  rec.ops.push({t:now(),p,d,i:ins,k}); prev=nv; lastType='';
+  if(!d&&!ins){ forced=''; return null }
+  let k=forced||(/insertFromPaste|insertFromDrop|insertReplacementText/.test(lastType)||ins.length>40?'paste':'type');
+  // text the student copied or cut from this same box is moved, not pasted from outside
+  if(k==='paste'&&clip&&ins.replace(/\r/g,'')===clip.replace(/\r/g,'')) k='move';
+  if(!rec.t0) rec.t0=Date.now()-now();
+  const op={t:now(),p,d,i:ins,k}; rec.ops.push(op); prev=nv; lastType=''; forced='';
   if(k==='paste'&&words(ins)>=15) post({type:'paste',words:words(ins)});
-  update(); save();
-});
+  if(k==='paste'&&words(ins)>=4&&!EMBED) askQuote(rec.ops.length-1);
+  update(); save(); return op;
+}
+ta.addEventListener('input',record);
+// a change made by a DraftTrail button (citation, quotation marks, heading): recorded as its own kind
+function edit(from,to,text,kind,selAfter){ ta.focus(); ta.setRangeText(text,from,to,selAfter||'end'); forced=kind; return record() }
 $('#task').addEventListener('input',()=>{rec.task=$('#task').value; save()});
 $('#sName').addEventListener('input',()=>{rec.name=$('#sName').value; save()});
-// leaving the page while writing (tab/app switch; with rules, also clicking outside the window)
+$('#pTitle').addEventListener('input',()=>{rec.title=$('#pTitle').value; save(); renderPreview()});
+
+/* ---------- leaving the page ---------- */
 rec.exits=rec.exits||[];
 function goneAway(how){ if(leftAt||handedIn) return; if(!rec.ops.length&&!RULES) return; leftAt=Date.now(); rec.leaves=(rec.leaves||0)+1; rec.exits.push({t:now(),how}); save() }
 function cameBack(){ if(!leftAt) return; const ms=Date.now()-leftAt; leftAt=0; rec.away_ms=(rec.away_ms||0)+ms; const x=rec.exits[rec.exits.length-1]; if(x) x.ms=ms; save();
   if(RULES&&!EMBED){ $('#lNum').textContent=rec.leaves; $('#leftOv').hidden=false; } }
+// dialogs of this page don't count as leaving it
 document.addEventListener('visibilitychange',()=>{ document.hidden?goneAway('switched tab or app'):cameBack() });
-if(RULES&&!EMBED){ addEventListener('blur',()=>setTimeout(()=>{ if(!document.hasFocus()) goneAway('clicked outside the page') },0)); addEventListener('focus',cameBack); }
+if(RULES&&!EMBED){ addEventListener('blur',()=>setTimeout(()=>{ if(!document.hasFocus()&&!picking) goneAway('clicked outside the page') },0)); addEventListener('focus',cameBack); }
+let picking=false;
 $('#lOk').onclick=()=>{ $('#leftOv').hidden=true; ta.focus() };
 // in class: QuizPolice can ask for the writing (time's up) or the student hands it in
 function handIn(auto){ if(handedIn) return; handedIn=true; rec.task=$('#task').value.trim()||rec.task; rec.finished=Date.now(); rec.text=ta.value; rec.auto=!!auto; saveNow();
@@ -124,19 +283,166 @@ addEventListener('message',e=>{ if(!EMBED||e.origin!==PO||!e.data||e.data.src!==
   if(e.data.type==='collect') handIn(true);
   if(e.data.type==='snapshot'){ rec.text=ta.value; post({type:'snapshot',rec}); }
   if(e.data.type==='reopen'){ handedIn=false; ta.readOnly=false; update(); } });
-if(EMBED) post({type:'ready',words:words(ta.value),pasted:pasted()});
 
-$('#copyBtn').onclick=async()=>{ try{ await navigator.clipboard.writeText(ta.value); $('#copyBtn').textContent='Copied ✓' }catch(e){ ta.select(); document.execCommand('copy'); $('#copyBtn').textContent='Copied ✓' } setTimeout(()=>$('#copyBtn').textContent='Copy text',2000) };
+/* ---------- sections and word goal ---------- */
+function headings(){ const out=[]; let pos=0, cur=null; const lines=ta.value.split('\n');
+  lines.forEach((l,i)=>{ const h=l.match(/^\s*#{1,3}\s+(.*)$/); if(h){ cur={title:h[1].trim()||'(untitled)',pos,line:i,w:0}; out.push(cur) } else if(cur) cur.w+=bodyWords(l); pos+=l.length+1 });
+  return out }
+function outline(){
+  const hs=headings(), el=$('#outline');
+  el.innerHTML=hs.length?hs.map((h,i)=>`<button data-i="${i}"><span>${esc(h.title)}</span><span>${h.w.toLocaleString()} words</span></button>`).join('')
+    :'<p class="note" style="margin:0">No sections yet. Press <b>Add a section heading</b>, or type a line that starts with “# ”.</p>';
+  el.querySelectorAll('button').forEach(b=>b.onclick=()=>{ const h=hs[+b.dataset.i]; ta.focus(); ta.setSelectionRange(h.pos,h.pos);
+    const lines=ta.value.split('\n').length; ta.scrollTop=Math.max(0,h.line/lines*ta.scrollHeight-40) });
+  const want=(rec.cfg.sections||[]).filter(s=>!hs.some(h=>h.title.toLowerCase()===s.toLowerCase()));
+  $('#suggest').innerHTML=want.length?`<p class="note" style="margin:0 0 6px">Sections your teacher asked for:</p>${want.map(s=>`<button class="btn" style="height:34px;margin:0 6px 6px 0" data-s="${esc(s)}">+ ${esc(s)}</button>`).join('')}`:'';
+  $('#suggest').querySelectorAll('button').forEach(b=>b.onclick=()=>addHeading(b.dataset.s,true));
+}
+function addHeading(text,atEnd){
+  const v=ta.value; let at=atEnd?v.length:ta.selectionStart;
+  if(!atEnd){ const ls=v.lastIndexOf('\n',at-1)+1; if(v.slice(ls,at).trim()) at=v.indexOf('\n',at)<0?v.length:v.indexOf('\n',at); else at=ls; }
+  const pre=at>0&&v[at-1]!=='\n'?'\n':'', pre2=at>0&&!/\n\n$/.test(v.slice(0,at)+pre)?'\n':'';
+  edit(at,at,`${pre}${pre2}# ${text}\n`,'tool');
+}
+$('#headBtn').onclick=()=>{ $('#headIn').value=''; $('#headOv').hidden=false; $('#headIn').focus() };
+$('#headCancel').onclick=()=>{ $('#headOv').hidden=true; ta.focus() };
+$('#headForm').onsubmit=e=>{ e.preventDefault(); const t=$('#headIn').value.trim(); if(!t) return; $('#headOv').hidden=true; addHeading(t,false) };
+$('#goalIn').value=rec.cfg.words||''; $('#goalIn').disabled=!!rec.cfg.wordsSet;
+$('#goalIn').oninput=()=>{ rec.cfg.words=Math.max(0,parseInt($('#goalIn').value)||0); update(); save() };
+// the teacher's sections go in at the start of an empty paper
+if(!rec.ops.length&&rec.cfg.sections&&rec.cfg.sections.length&&!EMBED){ edit(0,0,rec.cfg.sections.map(s=>`# ${s}\n\n`).join(''),'tool','start'); ta.setSelectionRange(rec.cfg.sections[0].length+3,rec.cfg.sections[0].length+3); }
+
+/* ---------- sources ---------- */
+const FIELDS={
+  book:[['authors','Author(s)'],['title','Title of the book'],['publisher','Publisher'],['place','Place of publication (optional)'],['year','Year'],['url','URL or DOI (if read online)']],
+  chapter:[['authors','Author(s) of the chapter'],['title','Title of the chapter'],['container','Title of the book'],['editors','Editor(s) of the book, e.g. Emma Johnson'],['publisher','Publisher'],['place','Place of publication (optional)'],['year','Year'],['pages','Pages of the chapter, e.g. 45-67']],
+  journal:[['authors','Author(s)'],['title','Title of the article'],['container','Name of the journal'],['volume','Volume'],['issue','Issue number'],['year','Year'],['pages','Pages of the article, e.g. 101-130'],['url','DOI or URL']],
+  news:[['authors','Author(s) (optional)'],['title','Headline'],['container','Newspaper or magazine'],['date','Date published','date'],['url','URL (if read online)']],
+  web:[['authors','Author(s) or organization'],['title','Title of the page'],['container','Name of the website'],['date','Date published or updated (if shown)','date'],['accessed','Date you read it (if no date is shown)','date'],['url','URL']],
+  other:[['authors','Author(s) or organization'],['title','Title'],['container','What it is or where it is from, e.g. Interview by the author'],['year','Year'],['url','URL (if online)']]};
+$('#fType').innerHTML=Object.entries(Cite.TYPES).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+$('#style').innerHTML=Object.entries(Cite.STYLES).map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('');
+$('#style').value=rec.cfg.style; $('#style').disabled=!!rec.cfg.styleSet;
+$('#styleNote').textContent=rec.cfg.styleSet?'Set by your teacher.':'';
+$('#style').onchange=()=>{ rec.cfg.style=$('#style').value; save(); renderSources(); renderPreview() };
+let editing=null, afterSave=null;
+function fieldsFor(type,s){ $('#fFields').innerHTML=FIELDS[type].map(([k,l,tp])=>{
+    const hint=k==='authors'?'<span class="note">Last name, first name. Separate people with “;”. Example: Smith, Jane; Lee, Ann. For an organization, type its name.</span>':'';
+    return `<label class="field"><span>${l}</span><input data-f="${k}" ${tp?`type="${tp}"`:''} value="${esc((s&&s[k])||'')}" ${k==='title'?'required':''}>${hint}</label>` }).join('') }
+$('#fType').onchange=()=>{ const cur=readForm(); fieldsFor($('#fType').value,cur) };
+function readForm(){ const o={type:$('#fType').value}; document.querySelectorAll('#fFields [data-f]').forEach(i=>o[i.dataset.f]=i.value.trim()); return o }
+function openSource(s,then){ editing=s||null; afterSave=then||null; $('#srcHead').textContent=s?'Edit source':'Add a source'; $('#fType').value=s?s.type:'book'; fieldsFor($('#fType').value,s); $('#srcErr').hidden=true; $('#srcOv').hidden=false; setTimeout(()=>{const f=$('#fFields input'); f&&f.focus()},30) }
+$('#addSrc').onclick=()=>openSource();
+$('#srcCancel').onclick=()=>{ $('#srcOv').hidden=true; afterSave=null };
+$('#srcForm').onsubmit=e=>{ e.preventDefault(); const o=readForm();
+  if(!o.title){ $('#srcErr').textContent='Please type the title.'; $('#srcErr').hidden=false; return }
+  let s;
+  if(editing){ s=editing; const oldKey=s.key; Object.keys(s).forEach(k=>{ if(!['id','key','added'].includes(k)) delete s[k] }); Object.assign(s,o); s.key=oldKey; }
+  else { s={id:'s'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),added:now(),...o}; s.key=Cite.makeKey(s,rec.sources); rec.sources.push(s); }
+  $('#srcOv').hidden=true; save(); renderSources(); renderPreview(); const f=afterSave; afterSave=null; if(f) f(s) };
+function usedKeys(){ const u=new Set(); let m; const re=new RegExp(Cite.TOKEN.source,'gu'); while((m=re.exec(ta.value))) u.add(m[1].toLowerCase()); return u }
+function renderSources(){
+  const u=usedKeys(); $('#srcN').textContent=rec.sources.length?`(${rec.sources.length})`:'';
+  $('#srcList').innerHTML=rec.sources.length?rec.sources.map(s=>`<div class="src"><span>${Cite.fmtHTML(Cite.entry(rec.cfg.style,s))}</span>
+    <span class="k">[@${esc(s.key)}] · ${u.has(s.key)?'cited':'not cited yet'}</span>
+    <span class="acts"><button class="btn" data-c="${s.id}">Cite here</button><button class="btn" data-e="${s.id}">Edit</button><button class="btn" data-d="${s.id}">Remove</button></span></div>`).join('')
+    :'<p class="note" style="margin:0">No sources yet. Add the books, articles and web pages you use.</p>';
+  $('#srcList').querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>openSource(rec.sources.find(s=>s.id===b.dataset.e)));
+  $('#srcList').querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>openCite(b.dataset.c));
+  $('#srcList').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{ const s=rec.sources.find(x=>x.id===b.dataset.d);
+    if(u.has(s.key)&&!confirm(`This source is cited in your paper. Remove it anyway? The citations [@${s.key}] will show as missing.`)) return;
+    rec.sources=rec.sources.filter(x=>x!==s); save(); renderSources(); renderPreview() });
+  fillQSrc();
+}
+/* ---------- cite ---------- */
+let citeSel=null, citeAt=null;
+function openCite(id){ citeAt=[ta.selectionStart,ta.selectionEnd]; citeSel=id||null;
+  if(!rec.sources.length){ openSource(null,s=>{ citeSel=s.id; showCite() }); return }
+  showCite() }
+function showCite(){
+  $('#citeList').innerHTML=rec.sources.map(s=>`<label class="src" style="flex-direction:row;gap:10px;align-items:flex-start;cursor:pointer"><input type="radio" name="cs" value="${s.id}" ${s.id===citeSel?'checked':''} style="height:auto;margin-top:4px"><span>${Cite.fmtHTML(Cite.entry(rec.cfg.style,s))}</span></label>`).join('');
+  $('#citeList').querySelectorAll('input').forEach(r=>r.onchange=()=>{ citeSel=r.value; $('#citeGo').disabled=false });
+  $('#citeGo').disabled=!citeSel; $('#citePg').value=''; $('#citeOv').hidden=false; }
+$('#citeBtn').onclick=()=>openCite();
+$('#citeCancel').onclick=()=>{ $('#citeOv').hidden=true; ta.focus() };
+$('#citeNew').onclick=()=>{ $('#citeOv').hidden=true; openSource(null,s=>{ citeSel=s.id; showCite() }) };
+function token(s,pg){ pg=(pg||'').replace(/[\]\[]/g,'').trim(); return `[@${s.key}${pg?', '+pg:''}]` }
+$('#citeGo').onclick=()=>{ const s=rec.sources.find(x=>x.id===citeSel); if(!s) return; $('#citeOv').hidden=true;
+  const [a]=citeAt||[ta.value.length]; edit(a,a,token(s,$('#citePg').value),'cite'); renderSources() };
+
+/* ---------- pasted text: quote or not ---------- */
+let qOp=-1;
+function fillQSrc(){ $('#qSrc').innerHTML=rec.sources.map(s=>`<option value="${s.id}">${esc(Cite.entry(rec.cfg.style,s).replace(/[\u0001\u0002]/g,'').slice(0,90))}</option>`).join('')+'<option value="__new">+ Add a new source…</option>' }
+function askQuote(i){ qOp=i; const w=words(rec.ops[i].i); $('#qTitle').textContent=`You pasted ${w} words. Is this a quote from one of your sources?`; fillQSrc(); $('#qPg').value=''; $('#qbar').hidden=false }
+$('#qNo').onclick=()=>{ $('#qbar').hidden=true; qOp=-1; ta.focus() };
+$('#qYes').onclick=()=>{ if($('#qSrc').value==='__new'||!rec.sources.length){ openSource(null,s=>{ fillQSrc(); $('#qSrc').value=s.id; markQuote() }); return } markQuote() };
+function markQuote(){
+  const op=rec.ops[qOp], s=rec.sources.find(x=>x.id===$('#qSrc').value); if(!op||!s) return;
+  const txt=op.i.replace(/\s+$/,''), u16=Array.from(ta.value.slice(0)).slice(0,op.p).join('').length;
+  let at=ta.value.indexOf(txt,Math.max(0,u16-50)); if(at<0) at=ta.value.indexOf(txt);
+  $('#qbar').hidden=true; if(at<0){ qOp=-1; return }
+  op.k='quote'; op.src=s.key; op.pg=$('#qPg').value.trim();
+  const long=words(txt)>=(rec.cfg.style==='apa'?40:rec.cfg.style==='mla'?50:100);
+  let endAt=at+txt.length;
+  if(long){ // block quotation: its own paragraph, no quotation marks
+    const ls=ta.value.lastIndexOf('\n',at-1)+1;
+    if(ta.value.slice(ls,at).trim()){ edit(at,at,'\n> ','tool'); endAt+=3 } else { edit(at,at,'> ','tool'); endAt+=2 }
+    edit(endAt,endAt,token(s,op.pg)+(ta.value[endAt]==='\n'||endAt>=ta.value.length?'':'\n'),'cite');
+  } else {
+    const before=ta.value[at-1]||'', after=ta.value[endAt]||'';
+    if(!/[“"]/.test(before)&&!/^[“"]/.test(txt)){ edit(at,at,'“','tool'); endAt++ }
+    if(!/[”"]/.test(after)&&!/[”"]$/.test(txt)){ edit(endAt,endAt,'”','tool'); endAt++ }
+    edit(endAt,endAt,token(s,op.pg),'cite');
+  }
+  qOp=-1; save(); renderSources();
+}
+
+/* ---------- preview and Word ---------- */
+function paperModel(){ return Cite.model(ta.value,rec.sources,rec.cfg.style) }
+function renderPreview(){ if($('#prevOv').hidden) return; const m=paperModel();
+  $('#prevBody').innerHTML=Cite.html(m,$('#pTitle').value.trim()||rec.task,$('#sName').value.trim());
+  $('#prevWarn').hidden=!m.missing.length; $('#prevWarn').textContent=m.missing.length?`No source found for: ${m.missing.map(k=>'[@'+k+']').join(', ')}. Add the source, or fix the code in your text.`:''; }
+$('#prevBtn').onclick=()=>{ $('#prevOv').hidden=false; renderPreview() };
+$('#prevClose').onclick=()=>{ $('#prevOv').hidden=true; ta.focus() };
+function wordFile(){ const m=paperModel(); const blob=Cite.docx(m,$('#pTitle').value.trim()||rec.task,$('#sName').value.trim());
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=fname()+'.docx'; document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  rec.word=(rec.word||0)+1; save(); }
+$('#wordBtn').onclick=wordFile; $('#prevWord').onclick=wordFile;
+const fname=()=>(($('#sName').value.trim()||'writing')+' '+($('#task').value.trim()||'writing')).replace(/[^\p{L}\p{N}]+/gu,'-').replace(/^-|-$/g,'').slice(0,60)||'writing';
+
+/* ---------- tabs ---------- */
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b)); document.querySelectorAll('.tpane').forEach(p=>p.hidden=p.id!=='t-'+b.dataset.t) });
+
+/* ---------- files ---------- */
+$('#copyBtn').onclick=async()=>{ const t=Cite.plain(paperModel(),$('#pTitle').value.trim()||rec.task,$('#sName').value.trim());
+  try{ await navigator.clipboard.writeText(rec.sources.length?t:ta.value); $('#copyBtn').textContent='Copied ✓' }catch(e){ ta.select(); document.execCommand('copy'); $('#copyBtn').textContent='Copied ✓' } setTimeout(()=>$('#copyBtn').textContent='Copy text',2000) };
 $('#dlBtn').onclick=()=>{
   if(!$('#sName').value.trim()){ $('#sName').focus(); $('#dlMsg').className='msg bad'; $('#dlMsg').textContent='Please type your name first.'; $('#dlMsg').hidden=false; return }
   rec.name=$('#sName').value.trim(); rec.task=$('#task').value.trim(); rec.finished=Date.now(); rec.text=ta.value; save();
   const blob=new Blob([JSON.stringify(rec)],{type:'application/json'});
-  const safe=(rec.name+' '+(rec.task||'writing')).replace(/[^\p{L}\p{N}]+/gu,'-').replace(/^-|-$/g,'').slice(0,60)||'writing';
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`${safe}.drafttrail`; document.body.append(a); a.click(); a.remove();
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`${fname()}.drafttrail`; document.body.append(a); a.click(); a.remove();
   setTimeout(()=>URL.revokeObjectURL(a.href),4000);
-  $('#dlMsg').className='msg ok'; $('#dlMsg').textContent='Downloaded. Hand in this .drafttrail file together with your writing (for example, attach both to your Google Classroom assignment). You can keep editing and download again.'; $('#dlMsg').hidden=false;
+  $('#dlMsg').className='msg ok'; $('#dlMsg').textContent='Downloaded. Hand in this .drafttrail file together with your paper (for example, attach both to your Google Classroom assignment). You can keep writing and download again. To continue on another computer, open this file there with “Continue from a DraftTrail file”.'; $('#dlMsg').hidden=false;
 };
-$('#resetBtn').onclick=()=>{ if(!confirm('Erase your text and its recording on this device?')) return; try{localStorage.removeItem(KEY0)}catch(e){} location.href=location.pathname+(rec.task?'?task='+encodeURIComponent(rec.task):'') };
+$('#resumeFile').addEventListener('click',()=>{ picking=true; setTimeout(()=>picking=false,60000) });
+$('#resumeFile').onchange=async e=>{ picking=false; const f=e.target.files[0]; e.target.value=''; if(!f) return; const msg=$('#resumeMsg'); msg.hidden=true;
+  try{ const d=JSON.parse(await f.text());
+    if(!d||!Array.isArray(d.ops)||!d.ops.every(o=>typeof o.t==='number'&&typeof o.p==='number'&&typeof o.d==='number'&&typeof o.i==='string')) throw new Error('This is not a DraftTrail file.');
+    let txt=''; { const a=[]; for(const o of d.ops) a.splice(o.p,o.d,...Array.from(o.i)); txt=a.join('') }
+    if(typeof d.text==='string'&&d.text!==txt) throw new Error('This file does not match its own recording, so it can’t be continued.');
+    if(rec.ops.length&&!confirm('Replace the writing on this computer with the writing from the file?')) return;
+    d.resumes=(d.resumes||[]); d.resumes.push({t:(d.ops.length?d.ops[d.ops.length-1].t:0)+Math.max(0,Date.now()-(d.lastAt||Date.now())),at:Date.now()});
+    delete d.finished; d.sources=d.sources||[]; d.cfg=d.cfg||{}; rec=d; await saveNow(); location.reload();
+  }catch(err){ msg.textContent=err.message||'Could not read that file.'; msg.hidden=false } };
+$('#resetBtn').onclick=async()=>{ if(!confirm('Erase your text and its recording on this device?')) return; try{localStorage.removeItem(KEY0)}catch(e){} try{await IDB.del(KEY0)}catch(e){}
+  const q=new URLSearchParams(location.search); if(rec.task&&!q.get('task')) q.set('task',rec.task); location.href=location.pathname+(q.toString()?'?'+q:'') };
+
+/* ---------- teacher settings note ---------- */
+{ const c=[]; if(rec.cfg.styleSet) c.push(`Citation style: <b>${Cite.STYLES[rec.cfg.style].name}</b>`); if(rec.cfg.wordsSet) c.push(`Word goal: <b>${rec.cfg.words.toLocaleString()}</b>`); if(rec.cfg.sections&&rec.cfg.sections.length) c.push(`Sections: ${rec.cfg.sections.map(esc).join(', ')}`);
+  if(c.length){ $('#cfgNote').innerHTML='From your teacher · '+c.join(' · '); $('#cfgNote').hidden=false } }
+renderSources(); update();
+if(EMBED) post({type:'ready',words:bodyWords(ta.value),pasted:pasted()});
+if(d0&&!rec.lastAt) save();
 })();
 </script>
 </body>

@@ -8,6 +8,14 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/public-sans-400.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/assets/fonts/fonts.css">
 <link rel="stylesheet" href="/assets/app.css">
+<style>
+.doc mark.q{background:#cdeedb;color:inherit}.doc .c{color:var(--muted);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85em}
+@media (prefers-color-scheme: dark){.doc mark.q{background:#1f5a3a}}
+.stbl{width:100%;border-collapse:collapse;font-size:14px}.stbl th,.stbl td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}.stbl th{color:var(--muted);font-weight:600}
+.bib p{margin:0 0 8px;padding-left:2em;text-indent:-2em;font-size:15px}
+.paper{font-size:17px}.paper h1{text-align:center;font-size:20px;margin:0 0 4px}.paper .p-name{text-align:center;margin:0 0 20px}.paper h2{font-size:17px;margin:16px 0 4px}.paper h2.p-sec{text-align:center;margin-top:28px}.paper p{margin:0;text-indent:2em}.paper blockquote{margin:8px 0 12px 2em;line-height:1.4}.paper sup{font-size:.7em}.paper .p-notes{font-size:14px;line-height:1.4}.paper .p-bib{text-indent:-2em;padding-left:2em;line-height:1.4;margin-bottom:10px}.paper .p-bad{background:#ffd6d6}
+.qlist div{border-left:4px solid #5bbf8a;padding:6px 10px;margin-bottom:8px;font-size:14px}
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -27,7 +35,7 @@
     <div class="report" id="report"></div>
   </section>
 </div>
-<script src="/assets/drafttrail-core.js"></script>
+<script src="/assets/drafttrail-core.js?v=20261111"></script><script src="/assets/cite.js?v=20261111"></script>
 <script>
 (()=>{
 const $=s=>document.querySelector(s);
@@ -38,6 +46,8 @@ function gen(steps,seed){
   for(const st of steps){
     if(st.pause){t+=st.pause; continue}
     if(st.paste){t+=400; ops.push({t,p:len,d:0,i:st.paste,k:'paste'}); len+=st.paste.length; continue}
+    if(st.quote){t+=400; ops.push({t,p:len,d:0,i:st.quote,k:'quote',src:st.src,pg:st.pg}); len+=st.quote.length; continue}
+    if(st.cite||st.tool){t+=900; const x=st.cite||st.tool; ops.push({t,p:len,d:0,i:x,k:st.cite?'cite':'tool'}); len+=x.length; continue}
     if(st.type){ const sp=st.speed||1;
       for(const ch of st.type){
         if(st.typos&&rnd()<st.typos&&/[a-z]/.test(ch)){ // typo then fix
@@ -72,7 +82,29 @@ const rafael=gen([
   {pause:60000},
   {type:'I also want to show my parents that their hard work was worth it. My mom works at a diner and my dad drives a delivery truck. Even when they are tired, they always tell me to keep studying. So right now, I already read about bridges and try building small ones out of popsicle sticks. ',typos:.05,speed:1.4,think:2}
 ],3);
-const SAMPLES=[{id:'s-maria',name:'Emma Johnson (sample)',task:'Essay: My Dream',ops:maria,leaves:4,away_ms:210000,sample:true},{id:'s-rafael',name:'Noah Miller (sample)',task:'Essay: My Dream',ops:rafael,leaves:1,away_ms:15000,sample:true}];
+const DAY=86400000;
+const ava=gen([
+  {tool:'# Introduction\n'},
+  {type:'In the second half of the nineteenth century, small towns along the Ohio River grew faster than almost anywhere else in the region. ',typos:.03,think:3},
+  {type:'Historians have long argued about why. ',typos:.03,think:3},{backspace:5},{type:'what drove this growth. ',typos:.03},
+  {type:'This paper argues that river trade, more than farming, explains the rise of these towns.',typos:.03,think:3},
+  {pause:DAY+3600000},{tool:'\n\n# Background\n'},
+  {type:'Before 1850, most river settlements were little more than landings. ',typos:.03,think:3},
+  {type:'As Jane Smith writes, ',typos:.02},{tool:'“'},{quote:'trade, not farming, built these towns',src:'smith2019',pg:'52'},{tool:'”'},{cite:'[@smith2019, 52]'},{type:'. ',typos:0},
+  {type:'Steamboats made it possible to move goods upstream for the first time',typos:.03},{cite:'[@miller2018, 50]'},{type:'.',typos:0},
+  {pause:2*DAY+5400000},{tool:'\n\n# Analysis\n'},
+  {type:'Shipping records show that river towns handled three times more cargo in 1870 than in 1850',typos:.03,think:2},{cite:'[@lee2021, 110-112]'},{type:'. ',typos:0},
+  {type:'Farms around the towns grew too, but more slowly. ',typos:.04,think:3},
+  {type:'The towns that grew fastest were the ones with deep-water landings, not the ones with the best farmland.',typos:.03,think:3},
+  {pause:DAY+7200000},{tool:'\n\n# Conclusion\n'},
+  {type:'The river towns were built by trade. Farming mattered, but it followed the boats rather than leading them.',typos:.03,think:3}
+],11);
+const avaSources=[
+  {id:'a1',key:'smith2019',type:'book',authors:'Smith, Jane',title:'The River Towns: Trade and Settlement',publisher:'Lakeview Press',place:'Chicago',year:'2019'},
+  {id:'a2',key:'miller2018',type:'chapter',authors:'Miller, Noah',title:'Steamboats',container:'A History of Rivers',editors:'Emma Johnson',publisher:'Oxford University Press',place:'New York',year:'2018',pages:'45-67'},
+  {id:'a3',key:'lee2021',type:'journal',authors:'Lee, Ann B.; Garcia, Mark',title:'Markets on the Water',container:'Journal of Economic History',volume:'45',issue:'2',year:'2021',pages:'101-130',url:'https://doi.org/10.1000/jeh.2021.5'}];
+const SAMPLES=[{id:'s-maria',name:'Emma Johnson (sample)',task:'Essay: My Dream',ops:maria,leaves:4,away_ms:210000,sample:true},{id:'s-rafael',name:'Noah Miller (sample)',task:'Essay: My Dream',ops:rafael,leaves:1,away_ms:15000,sample:true},
+  {id:'s-ava',name:'Ava Wilson (sample)',task:'Term paper: The River Towns',ops:ava,leaves:2,away_ms:40000,sample:true,sources:avaSources,cfg:{style:'cmos-nb'},title:'Trade and the River Towns, 1850–1900',t0:Date.now()-6*DAY,resumes:[{t:DAY*3,at:Date.now()-3*DAY}]}];
 
 
 let subs=[];
@@ -87,7 +119,8 @@ function addSub(d,fname){
   if(!ok) throw new Error('damaged file');
   const rebuilt=build(d.ops,d.ops.length).map(c=>c.ch).join('');
   const s={id:'f'+Math.random().toString(36).slice(2),name:String(d.name||fname).slice(0,80),task:String(d.task||'').slice(0,140),ops:d.ops,leaves:d.leaves||0,away_ms:d.away_ms||0,rules:!!d.rules,auto:!!d.auto,
-    when:d.finished||d.lastAt||d.created, mismatch: typeof d.text==='string' && d.text!==rebuilt};
+    when:d.finished||d.lastAt||d.created, mismatch: typeof d.text==='string' && d.text!==rebuilt,
+    sources:Array.isArray(d.sources)?d.sources:[], cfg:d.cfg||{}, title:String(d.title||'').slice(0,200), t0:d.t0||d.created||null, resumes:Array.isArray(d.resumes)?d.resumes:[], word:d.word||0};
   subs.push(s); return s;
 }
 async function openFiles(files){
@@ -103,7 +136,7 @@ const dz=$('#drop');
 ['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault(); dz.classList.add('over')}));
 ['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault(); dz.classList.remove('over')}));
 dz.addEventListener('drop',e=>openFiles([...e.dataTransfer.files]));
-$('#sampleBtn').onclick=()=>{ SAMPLES.forEach(x=>{ if(!subs.some(s=>s.id===x.id)) subs.push({...x,when:Date.now()}) }); sel=SAMPLES[0].id; show() };
+$('#sampleBtn').textContent='Try with three samples (two essays and a term paper)'; $('#sampleBtn').onclick=()=>{ SAMPLES.forEach(x=>{ if(!subs.some(s=>s.id===x.id)) subs.push({...x,when:Date.now()}) }); sel=SAMPLES[0].id; show() };
 function show(){ $('#teacher').hidden=false; renderSubs(); renderReport() }
 let sel=null, play=null;
 function renderSubs(){
@@ -125,21 +158,22 @@ function renderReport(){
     <div class="flags">${flags}</div>
     <p class="note" style="margin:0">Flags are reasons to look closer and talk with the student, not proof of cheating.</p></div>
   <div class="metrics">
-    ${M(a.w,'words in final essay')}${M(a.pastePct+'%','of the essay was pasted',a.pastePct>=30)}${M(mmss(a.active),'active writing time')}
-    ${M(a.sessions,a.sessions===1?'writing session':'writing sessions')}${M(a.rev+'%','of typed text revised',a.w>=120&&a.rev<2)}${M(a.pauses,'thinking pauses (5s+)')}${M(s.leaves||0,'times left the page',(s.leaves||0)>=5)}${M(mmss(s.away_ms||0),'time away from the page')}${M(s.mismatch?'No':'Yes','final text matches the recording',s.mismatch)}
+    ${M(a.w,'words in the final text')}${M(a.pastePct+'%','pasted without a citation',a.pastePct>=30)}${(s.sources||[]).length||a.quotes.length?M(a.quotePct+'%','quoted from sources (cited)',a.quotePct>=25):''}${M(mmss(a.active),'active writing time')}
+    ${M(a.sessions,a.sessions===1?'writing session':'writing sessions')}${M(a.rev+'%','of typed text revised',a.w>=120&&a.rev<2)}${M(a.pauses,'thinking pauses (5s+)')}${M(s.leaves||0,'times left the page',(s.leaves||0)>=5)}${M(mmss(s.away_ms||0),'time away from the page')}${M(s.mismatch?'No':'Yes','final text matches the recording',s.mismatch)}${(s.resumes||[]).length?M(s.resumes.length,'times continued on another computer'):''}
   </div>
+  ${sessPanel(s)}${srcPanel(s,a)}
   <div class="panel chartbox"><div class="lbl">Essay length over time</div>${chart(s.ops)}
     <div class="legend"><span><i style="background:var(--chart)"></i>Characters in essay</span><span><i style="background:var(--pen);border-radius:50%"></i>Paste</span></div></div>
   <div class="panel replay"><div class="lbl">Replay</div>
     <div class="ctrl"><button class="btn pri" id="pbtn">Play</button>
       <input type="range" id="scrub" min="0" max="${s.ops.length}" value="${s.ops.length}" aria-label="Replay position">
-      <select id="speed" aria-label="Replay speed"><option value="4">4×</option><option value="10" selected>10×</option><option value="30">30×</option></select>
+      <select id="speed" aria-label="Replay speed"><option value="4">4×</option><option value="10" selected>10×</option><option value="30">30×</option><option value="100">100×</option></select>
       <span class="clock" id="pclock">${mmss(a.total)}</span></div>
     <div class="doc" id="doc"></div>
-    <div class="legend"><span><i style="background:var(--paste)"></i>Pasted text</span><span>Long pauses are shortened during replay.</span></div></div>`;
+    <div class="legend"><span><i style="background:var(--paste)"></i>Pasted text</span>${a.quotes.length?'<span><i style="background:#cdeedb"></i>Cited quote</span>':''}<span>Long pauses are shortened during replay.</span></div></div>`;
   const ops=s.ops; let arr=build(ops,ops.length), idx=ops.length;
   const doc=$('#doc'), sc=$('#scrub');
-  const draw=()=>{let h='',run='',cur=null; const flush=()=>{if(run){h+=cur==='p'?`<mark>${esc(run)}</mark>`:esc(run); run=''}};
+  const draw=()=>{let h='',run='',cur=null; const flush=()=>{if(run){h+=cur==='p'?`<mark>${esc(run)}</mark>`:cur==='q'?`<mark class="q">${esc(run)}</mark>`:cur==='c'?`<span class="c">${esc(run)}</span>`:esc(run); run=''}};
     for(const c of arr){if(c.o!==cur){flush(); cur=c.o} run+=c.ch} flush(); doc.innerHTML=h+'<span class="caret"></span>';
     $('#pclock').textContent=`${mmss(idx?ops[idx-1].t:0)} / ${mmss(a.total)}`; sc.value=idx};
   const seek=n=>{ if(n<idx){arr=build(ops,n)} else for(let i=idx;i<n;i++) apply(arr,ops[i]); idx=n; draw() };
@@ -155,6 +189,29 @@ function renderReport(){
       if(idx>=ops.length){stopPlay(); return} play=requestAnimationFrame(step) };
     play=requestAnimationFrame(step) };
 }
+function sessPanel(s){ s.sources=s.sources||[];
+  const ss=sessionsOf(s.ops,s.t0); if(ss.length<2&&!s.sources.length) return '';
+  const days=s.t0&&ss.length?Math.max(1,Math.round((ss[ss.length-1].at-ss[0].at)/86400000)+1):0;
+  const row=x=>`<tr><td>${x.at?new Date(x.at).toLocaleString([], {weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):mmss(x.start)}</td><td>${mmss(x.active)}</td><td>${(x.w1-x.w0>=0?'+':'')+(x.w1-x.w0)}</td><td>${x.pasted?x.pasted+' pasted':''}${x.pasted&&x.quoted?', ':''}${x.quoted?x.quoted+' quoted':''}</td></tr>`;
+  return `<div class="panel" style="padding:16px"><div class="lbl">Writing sessions: ${ss.length}${days>1?` over ${days} days`:''}</div>
+    <div style="overflow-x:auto"><table class="stbl"><thead><tr><th>Started</th><th>Active time</th><th>Words</th><th>Pasted / quoted words</th></tr></thead><tbody>${ss.map(row).join('')}</tbody></table></div></div>`;
+}
+function srcPanel(s,a){ s.sources=s.sources||[];
+  if(!s.sources.length&&!a.quotes.length) return '';
+  const style=Cite.STYLES[(s.cfg||{}).style]?s.cfg.style:'cmos-nb', m=Cite.model(a.text,s.sources,style);
+  const used=new Set(m.used.map(x=>x.key));
+  const list=s.sources.slice().sort((x,y)=>Cite.entry(style,x).localeCompare(Cite.entry(style,y))).map(x=>`<p>${Cite.fmtHTML(Cite.entry(style,x))}${used.has(x.key)?'':' <span class="tag t-flag">not cited in the text</span>'}</p>`).join('');
+  const kept=new Set(a.fin.filter(c=>c.o==='q').map(c=>c.src));
+  const qs=a.quotes.map(q=>{const src=s.sources.find(x=>x.key===q.src); return `<div>“${esc(q.i.length>220?q.i.slice(0,220)+'…':q.i)}”<br><span class="note">${src?esc(Cite.people(src.authors)[0]?Cite.people(src.authors)[0].last:src.title)+', '+esc(src.title.split(':')[0]):'Unknown source'}${q.pg?', p. '+esc(q.pg):''} · ${mmss(q.t)}</span></div>`}).join('');
+  return `<div class="panel" style="padding:16px;display:flex;flex-direction:column;gap:10px"><div class="lbl">Sources (${Cite.STYLES[style].name}) · ${m.notes.length?m.notes.length+' footnotes · ':''}${m.used.length} of ${s.sources.length} cited</div>
+    <div class="bib">${list||'<p class="note">No sources listed.</p>'}</div>
+    ${m.missing.length?`<div class="flag">${ico.flag}<span>Citations with no matching source: ${m.missing.map(k=>'[@'+esc(k)+']').join(', ')}</span></div>`:''}
+    ${qs?`<div class="lbl" style="margin-top:6px">Pasted text the student marked as quotes (${a.quotes.length})</div><div class="qlist">${qs}</div><p class="note" style="margin:0">Check these against the sources. Marking text as a quote is the student's own statement.</p>`:''}
+    <button class="btn" id="paperBtn" style="align-self:flex-start">Open the formatted paper</button><div id="paperBox" hidden></div></div>`;
+}
+document.addEventListener('click',e=>{ if(e.target&&e.target.id==='paperBtn'){ const s=subs.find(x=>x.id===sel)||subs[0]; const a=analyze(s.ops); const box=$('#paperBox');
+  box.innerHTML=`<div style="background:#fff;color:#111;padding:28px 32px;border-radius:8px;font-family:'Times New Roman',Georgia,serif;line-height:1.7" class="paperwrap">${Cite.html(Cite.model(a.text,s.sources,(s.cfg||{}).style||'cmos-nb'),s.title||s.task,s.name)}</div>`;
+  box.hidden=!box.hidden; } });
 function stopPlay(){ if(play){cancelAnimationFrame(play); play=null} const b=$('#pbtn'); if(b) b.textContent='Play' }
 
 })();

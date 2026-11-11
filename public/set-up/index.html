@@ -22,13 +22,21 @@
 <article class="wrap prose">
 <h1>Set up a writing task</h1>
 <p class="lead">Choose how your students will write. Both are free, and students don't need accounts.</p>
-<style>#su [hidden]{display:none!important}#su .field{display:flex;flex-direction:column;gap:6px;font-weight:600}#su input#suTask,#su input#suLink{width:100%;min-height:46px;border-radius:10px;border:1px solid #c9cfdb;padding:0 12px;font:inherit;font-weight:400;box-sizing:border-box}#su{background:#fff;border:1px solid #e2e6ee;border-radius:14px;padding:18px}</style>
+<style>#su [hidden]{display:none!important}#su .field{display:flex;flex-direction:column;gap:6px;font-weight:600}#su input#suTask,#su input#suLink{width:100%;min-height:46px;border-radius:10px;border:1px solid #c9cfdb;padding:0 12px;font:inherit;font-weight:400;box-sizing:border-box}#su fieldset{min-width:0}#su select,#su textarea{width:100%;box-sizing:border-box;max-width:100%}#su{background:#fff;border:1px solid #e2e6ee;border-radius:14px;padding:18px}</style>
 <form id="su" class="panel pad" style="display:flex;flex-direction:column;gap:14px;max-width:720px">
   <label class="field"><span>Assignment</span><input id="suTask" maxlength="140" placeholder="e.g. Short answer: Why do leaves change color?" required></label>
   <fieldset style="border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px;margin:0">
     <legend><b>How will students write?</b></legend>
     <label style="display:flex;gap:10px;align-items:flex-start"><input type="radio" name="mode" value="own" checked style="margin-top:5px"><span><b>On their own: homework, or class without live monitoring</b><br><span class="note">Students get a link, write, and hand in a .drafttrail file. Nothing is uploaded. You review the files afterwards.</span></span></label>
     <label style="display:flex;gap:10px;align-items:flex-start"><input type="radio" name="mode" value="live" style="margin-top:5px"><span><b>Live in class, with QuizPolice</b><br><span class="note">Students join with a code. You see live who leaves the writing page, big pastes and word counts. You can lock after too many exits, set a timer, and download every essay at the end. Essays are saved on our server for up to 30 days.</span></span></label>
+  </fieldset>
+  <fieldset id="suPaper" style="border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:12px;margin:0">
+    <legend><b>For papers and longer writing (optional)</b></legend>
+    <label class="field"><span>Citation style</span><select id="suStyle" style="min-height:44px;border-radius:10px;border:1px solid #c9cfdb;padding:0 10px;font:inherit"><option value="">Let students choose (or no citations)</option><option value="cmos-nb">Chicago, notes and bibliography (footnotes)</option><option value="cmos-ad">Chicago, author-date</option><option value="apa">APA 7th edition</option><option value="mla">MLA 9th edition</option></select></label>
+    <label class="field"><span>Word goal</span><input id="suWords" type="number" min="0" step="100" placeholder="e.g. 3000" style="min-height:44px;border-radius:10px;border:1px solid #c9cfdb;padding:0 12px;font:inherit;max-width:220px"></label>
+    <label class="field"><span>Sections</span><select id="suSecT" style="min-height:44px;border-radius:10px;border:1px solid #c9cfdb;padding:0 10px;font:inherit"><option value="">None</option><option value="Introduction|Background|Analysis|Conclusion">Research paper: Introduction, Background, Analysis, Conclusion</option><option value="Background|Problem|Analysis|Options|Recommendation|Conclusion">Case study: Background, Problem, Analysis, Options, Recommendation, Conclusion</option><option value="Introduction|Literature Review|Method|Results|Discussion|Conclusion">Research report: Introduction, Literature Review, Method, Results, Discussion, Conclusion</option><option value="custom">My own sections…</option></select></label>
+    <label class="field" id="suSecRow" hidden><span>Your sections, one per line</span><textarea id="suSec" rows="5" style="border-radius:10px;border:1px solid #c9cfdb;padding:10px 12px;font:inherit"></textarea></label>
+    <span class="note">Students add their sources once, press “Cite” where a citation belongs, and get the footnotes or in-text citations and the bibliography made for them. They can download the paper as a Word file with real footnotes, and hand in the .drafttrail file with it.</span>
   </fieldset>
   <label id="suRulesRow" style="display:flex;gap:10px;align-items:center"><input type="checkbox" id="suRules" checked> <span><b>Warn students when they leave the page</b> <span class="note">(every exit is recorded in the file either way)</span></span></label>
   <button class="btn btn-big" id="suGo">Create the student link</button>
@@ -46,10 +54,14 @@
 <script>
 (()=>{const $=s=>document.querySelector(s);
 const mode=()=>document.querySelector('input[name=mode]:checked').value;
-document.querySelectorAll('input[name=mode]').forEach(r=>r.onchange=()=>{const live=mode()==='live';$('#suRulesRow').hidden=live;$('#suGo').textContent=live?'Continue in QuizPolice':'Create the student link';$('#suOut').hidden=true;});
+$('#suSecT').onchange=()=>{$('#suSecRow').hidden=$('#suSecT').value!=='custom'};
+document.querySelectorAll('input[name=mode]').forEach(r=>r.onchange=()=>{const live=mode()==='live';$('#suRulesRow').hidden=live;$('#suPaper').hidden=live;$('#suGo').textContent=live?'Continue in QuizPolice':'Create the student link';$('#suOut').hidden=true;});
 $('#su').onsubmit=e=>{e.preventDefault();const t=$('#suTask').value.trim();if(!t){$('#suTask').focus();return}
  if(mode()==='live'){location.href='https://quizpolice.telarlabs.net/teacher/?writing='+encodeURIComponent(t)+'#new';return}
- const u=location.origin+'/write/?task='+encodeURIComponent(t)+($('#suRules').checked?'&rules=1':'');$('#suLink').value=u;$('#suOut').hidden=false;$('#suLink').select();};
+ const q=new URLSearchParams({task:t}); if($('#suRules').checked) q.set('rules','1');
+ if($('#suStyle').value) q.set('style',$('#suStyle').value); if(parseInt($('#suWords').value)>0) q.set('words',parseInt($('#suWords').value));
+ const sec=$('#suSecT').value==='custom'?$('#suSec').value.split('\n').map(x=>x.trim()).filter(Boolean).join('|'):$('#suSecT').value; if(sec) q.set('sections',sec);
+ const u=location.origin+'/write/?'+q.toString();$('#suLink').value=u;$('#suOut').hidden=false;$('#suLink').select();};
 $('#suCopy').onclick=async()=>{try{await navigator.clipboard.writeText($('#suLink').value);$('#suCopy').textContent='Copied ✓'}catch(e){$('#suLink').select()}setTimeout(()=>$('#suCopy').textContent='Copy link',2000)};
 })();
 </script></article>
