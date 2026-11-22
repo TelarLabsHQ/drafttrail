@@ -165,9 +165,35 @@ def pages():
 <h2>What is not recorded</h2><ul><li>Anything outside the DraftTrail writing box: other apps, websites, the screen or the camera.</li><li>Nothing is sent to a server. The recording is saved on the student's device and in the .drafttrail file they download.</li></ul>
 <h2>What the teacher sees</h2><ul><li><b>Flags</b> to look at: large pastes, a high share of pasted text, very few corrections, unusually fast typing, a long essay in very little time, leaving the page often, or a file whose text doesn't match its own recording.</li>
 <li><b>Numbers:</b> words, % pasted, active writing time, sessions, revisions, thinking pauses.</li><li><b>A chart</b> of the essay's length over time with paste markers, and a <b>replay</b> with pasted text highlighted.</li></ul>
+<h2>What each number means</h2>
+<ul><li><b>Active writing time</b> adds up the time between edits, but counts any gap as at most 30 seconds. A student who leaves the essay open overnight doesn’t look like they wrote for 12 hours.</li>
+<li><b>Sessions</b>: a new session starts after a break of more than 5 minutes. Real essays are often written in two or three sittings.</li>
+<li><b>Thinking pauses</b>: gaps of more than 5 seconds between edits. Writers pause to plan, reread and choose words, so a long essay with almost no pauses is unusual.</li>
+<li><b>Revisions</b>: how much of the typed text was later deleted. Most people delete and rewrite as they go.</li>
+<li><b>% pasted</b>: how much of the final essay arrived by pasting or dropping text in, rather than typing. Pasted text the student marked as a quote is counted separately.</li></ul>
+
+<h2>When a flag appears</h2>
+<table class="tbl"><thead><tr><th>Flag</th><th>Shown when</th></tr></thead><tbody>
+<tr><td>Large paste</td><td>A single paste of 15 words or more that the student didn’t mark as a quote.</td></tr>
+<tr><td>High share of pasted text</td><td>30% or more of the final text was pasted.</td></tr>
+<tr><td>Lots of quoted text</td><td>25% or more of the final text is quoted from sources. Quoting is allowed, but an essay that is mostly quotes may need a conversation.</td></tr>
+<tr><td>Very few corrections</td><td>An essay of 120 words or more where less than 2% of the typed text was deleted.</td></tr>
+<tr><td>Unusually fast typing</td><td>More than 90 words per minute of active time.</td></tr>
+<tr><td>Long essay, little time</td><td>150 words or more written in less than 5 minutes of active time.</td></tr></tbody></table>
+<p>Flags are deliberately simple so you can explain them to a student or a parent in one sentence. None of them decides anything on its own.</p>
+
+<h2>Quotes and sources</h2>
+<p>Students can add sources (books, articles, web pages and more) and cite them while they write. DraftTrail formats the citations in APA 7, MLA 9 or Chicago, and builds the reference list. When a student pastes a passage and marks it as a quote from a source, it’s shown as a quote, not as an unexplained paste. This teaches the habit you want: copy only what you cite, and say where it came from.</p>
+
+<h2>Reading a replay</h2>
+<p>The replay shows the essay being written from the first word, faster than real time, with pasted text highlighted. Look for the shape of the work rather than single moments:</p>
+<ul><li><b>Usual:</b> an outline or a rough start, then sentences that grow, move and get rewritten, with pauses in between.</li>
+<li><b>Worth asking about:</b> a whole paragraph arriving at once, or steady typing from start to finish with no pauses or corrections, which can mean the text was copied by hand from somewhere else.</li></ul>
+
 <h2>Limits to know</h2><ul><li>A student could type out text from another source by hand. Replay often shows this as steady typing with no pauses or corrections.</li>
 <li>Tech-savvy students could try to edit a .drafttrail file. DraftTrail checks that the final text matches its recording and flags it if not.</li>
-<li>Flags are reasons to talk with the student, not proof.</li></ul>''')
+<li>Flags are reasons to talk with the student, not proof.</li></ul>
+<p>Ready to try it? <a href="/set-up/">Set up a writing task</a>, or read <a href="https://telarlabs.net/guides/writing-process-age-of-ai/">how to see the writing process in the age of AI</a>.</p>''')
     prose('/set-up/', 'Set Up a Writing Task', 'Create a DraftTrail writing link for homework, or a live in-class writing task with exit monitoring through QuizPolice.', SETUP)
     prose('/for-teachers/', 'Using DraftTrail with Your Class', 'Step-by-step guide for teachers: assigning writing with DraftTrail and reviewing the files in Google Classroom.', f'''
 <h1>Using {E(NAME)} with your class</h1>
@@ -188,11 +214,33 @@ def pages():
            ('Does DraftTrail detect AI writing?', 'Not directly. It shows how the text arrived: typed with pauses and corrections, or pasted in large blocks. That is often more useful than an AI detector, which can be wrong.'),
            ('Do teachers need to upload student files?', 'No. Files open in the teacher\'s browser and are not uploaded.')]
     prose('/faq/', 'Frequently Asked Questions', f'Answers to common questions about {NAME}.', '<h1>Frequently asked questions</h1>' + ''.join(f'<h2>{E(q)}</h2><p>{E(a)}</p>' for q, a in faq))
-    prose('/about/', 'About', f'About {NAME} by {ST}.', f'''
+    prose('/about/', 'About', f'About {NAME}, the free writing-process recorder, by {ST}.', f"""
 <h1>About {E(NAME)}</h1><p class="lead">{E(NAME)} is a free writing-process recorder made by {E(ST)}, a small independent studio.</p>
 <p>AI tools can produce a finished essay in seconds, and AI detectors often get it wrong, sometimes accusing honest students. {E(NAME)} takes a different approach: instead of guessing from the final text, it keeps a record of how the text was written, which students can share to show their effort.</p>
+
+<h2>Why a record of the process</h2>
+<p>A finished essay can’t tell you how it was made. A history of the writing can: when it started, how it grew, what was rewritten, and what was pasted in. Teachers have always asked for drafts and outlines for this reason. DraftTrail does the same thing automatically, for every essay, without extra work for the student.</p>
+<p>It helps honest students most. A student who is wrongly suspected can hand in the recording and show hours of real work, instead of trying to prove a negative.</p>
+
+<h2>Who it’s for</h2>
+<ul><li><b>Teachers</b> who assign essays, reflections or short answers and want a fair way to check the work.</li>
+<li><b>Students</b> who want proof that their writing is their own.</li>
+<li><b>Schools</b> that use Google Classroom or another learning system: the .drafttrail file is handed in like any other file.</li>
+<li><b>Writing tutors</b> who want to see where a student gets stuck, by watching how the draft develops.</li></ul>
+
+<h2>How it’s built</h2>
+<ul><li><b>Private by default.</b> The writing and its recording are saved on the student’s device. Nothing is uploaded unless the teacher uses the live in-class mode with <a href="https://quizpolice.telarlabs.net">QuizPolice</a>.</li>
+<li><b>Checks that can be explained.</b> Every flag is a simple rule in plain words, listed on <a href="/how-it-works/">How it works</a>.</li>
+<li><b>Useful for writing, too.</b> Students get word counts, section headings, citations in APA, MLA and Chicago, and a reference list.</li>
+<li><b>Works on any device</b> with a modern browser, including phones, with no app to install.</li></ul>
+
 <h2>Our promises</h2><ul><li>Free, no accounts.</li><li>Recordings stay on the student's device and in the file they choose to hand in.</li><li>No ads on the writing page or the review page.</li></ul>
-<h2>Other {E(ST)} tools</h2><p><a href="https://quizpolice.telarlabs.net">QuizPolice</a> for monitored online quizzes, <a href="https://pizarrapad.telarlabs.net">PizarraPad</a>, a free whiteboard, <a href="https://clips.telarlabs.net">Telar Clips</a>, free motion backgrounds, and <a href="https://tixward.telarlabs.net">Tixward</a>, event tickets and bookings.</p>''')
+
+<h2>Get started</h2>
+<ul><li>Students: <a href="/write/">start writing</a>.</li><li>Teachers: <a href="/set-up/">set up a task</a>, read <a href="/for-teachers/">using DraftTrail with your class</a>, or <a href="/review/">review files</a>.</li></ul>
+
+<h2>Other {E(ST)} tools</h2><p><a href="https://quizpolice.telarlabs.net">QuizPolice</a> for monitored online quizzes, <a href="https://pizarrapad.telarlabs.net">PizarraPad</a>, a free whiteboard, <a href="https://clips.telarlabs.net">Telar Clips</a>, free motion backgrounds, and <a href="https://tixward.telarlabs.net">Tixward</a>, event tickets and bookings.</p>
+<p>Questions or ideas? <a href="/contact/">Contact us</a>.</p>""")
     prose('/privacy/', 'Privacy Policy', f'Privacy policy for {NAME}.', f'''
 <h1>Privacy policy</h1><p class="lead">{E(NAME)} is run by {E(ST)}. Your writing and its recording never leave your device unless you share the file yourself, or your teacher uses the live in-class mode described below.</p>
 <h2>What DraftTrail stores</h2><p>While you write, your text, your name, the assignment name and the recording of your edits are saved in your browser's storage on your device. When you tap Download, the same information is saved into a .drafttrail file on your device. We don't receive any of it.</p>
@@ -219,9 +267,9 @@ def extras():
 if __name__ == '__main__':
     home(); pages(); extras(); print('Built DraftTrail pages')
 
-    # AdSense: no ad code on error or contact pages (screens without publisher content)
+    # AdSense: no ad code on error, contact and legal pages (no publisher content)
     import re as _re
-    for _p in ('404.html', 'contact/index.html'):
+    for _p in ('404.html', 'contact/index.html', 'privacy/index.html', 'terms/index.html'):
         _f = os.path.join(PUB, _p)
         if os.path.exists(_f):
             _s = open(_f).read()
