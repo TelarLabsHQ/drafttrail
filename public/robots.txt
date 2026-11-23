@@ -1,4 +1,9 @@
 User-agent: *
 Disallow: /write/
 Disallow: /review/
+Disallow: /cdn-cgi/
+
+User-agent: Mediapartners-Google
+Allow: /
+
 Sitemap: https://drafttrail.telarlabs.net/sitemap.xml
