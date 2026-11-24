@@ -69,7 +69,7 @@ def page(path, title, desc, body):
 <footer class="foot"><div class="wrap foot-in">
   <div><a class="logo" href="/">{LOGO}<span>{E(NAME)}</span></a><p class="muted">Free writing-process recorder for students and teachers. Part of the {E(ST)} teacher tools.</p></div>
   <div class="foot-cols">
-    <div><h4>Use it</h4><a href="/write/">Start writing</a><a href="/review/">Review .drafttrail files</a><a href="/how-it-works/">How it works</a><a href="/for-teachers/">For teachers</a><a href="/guides/">Guides</a><a href="/faq/">FAQ</a></div>
+    <div><h4>Use it</h4><a href="/write/">Start writing</a><a href="/review/">Review .drafttrail files</a><a href="/how-it-works/">How it works</a><a href="/for-teachers/">For teachers</a><a href="/guides/">Guides</a><a href="/practice/word-choice/">Word Choice Check</a><a href="/faq/">FAQ</a></div>
     <div><h4><a href="https://telarlabs.net" style="color:inherit;margin:0">{E(ST)}</a></h4><a href="https://telarlabs.net">Telar Labs home</a><a href="https://telarlabs.net/guides/">Telar Labs guides</a><a href="/about/">About</a><a href="/privacy/">Privacy policy</a><a href="/terms/">Terms of use</a><a href="/contact/">Contact</a></div>
   </div>
 </div>{family_row()}<div class="wrap fine">&copy; {date.today().year} {E(ST)}.</div></footer>
@@ -258,7 +258,7 @@ def pages():
 
 def extras():
     open(os.path.join(PUB, 'favicon.svg'), 'w').write(LOGO.replace('class="logo-mark" ', 'xmlns="http://www.w3.org/2000/svg" '))
-    urls = ['/', '/how-it-works/', '/set-up/', '/for-teachers/', '/faq/', '/guides/'] + [f'/guides/{g["slug"]}/' for g in GUIDES] + ['/about/', '/privacy/', '/terms/', '/contact/']
+    urls = ['/', '/how-it-works/', '/set-up/', '/for-teachers/', '/faq/', '/guides/'] + [f'/guides/{g["slug"]}/' for g in GUIDES] + ['/practice/word-choice/', '/about/', '/privacy/', '/terms/', '/contact/']
     open(os.path.join(PUB, 'sitemap.xml'), 'w').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'<url><loc>{URL}{u}</loc></url>\n' for u in urls) + '</urlset>\n')
     open(os.path.join(PUB, 'robots.txt'), 'w').write(f'User-agent: *\nDisallow: /write/\nDisallow: /review/\nDisallow: /cdn-cgi/\n\nUser-agent: Mediapartners-Google\nAllow: /\n\nSitemap: {URL}/sitemap.xml\n')
     if CFG['adsense_client']:
@@ -274,15 +274,22 @@ GUIDE_STYLE = ('<style>.glist{list-style:none;padding:0;display:flex;flex-direct
 def guides():
     items = ''.join(f'<li><a href="/guides/{g["slug"]}/">{E(g["title"])}</a><p class="muted">{E(g["desc"])}</p></li>' for g in GUIDES)
     prose('/guides/', f'{NAME} Guides for Teachers', f'{GUIDES_LEAD}', f'{GUIDE_STYLE}<h1>Guides</h1><p class="lead">{E(GUIDES_LEAD)}</p><ul class="glist">{items}</ul>'
-          f'<p>More guides for teachers and organizers: <a href="https://telarlabs.net/guides/">Telar Labs guides</a>.</p>')
+          f'<p><b>For students:</b> practice commonly confused words with our free <a href="/practice/word-choice/">Word Choice Check</a> game.</p><p>More guides for teachers and organizers: <a href="https://telarlabs.net/guides/">Telar Labs guides</a>.</p>')
     for g in GUIDES:
         more = ''.join(f'<li><a href="/guides/{o["slug"]}/">{E(o["title"])}</a></li>' for o in GUIDES if o is not g)
         prose(f'/guides/{g["slug"]}/', g['title'], g['desc'],
               f'{GUIDE_STYLE}<p class="gmeta muted"><a href="/guides/">Guides</a> · Updated {E(g["updated"])}</p><h1>{E(g["title"])}</h1>{g["body"]}'
               f'<h2>More guides</h2><ul>{more}<li><a href="https://telarlabs.net/guides/">Telar Labs guides for teachers and organizers</a></li></ul>')
 
+# ---------------------------------------------------------------- Word Choice Check (practice game)
+from practice_content import GAME_CSS, wc_game, wc_text
+def practice():
+    prose('/practice/word-choice/', 'Word Choice Check: Commonly Confused Words Quiz Game',
+          'A free game for students: affect or effect, fewer or less, its or it’s and more. Practice commonly confused words, with a quick guide to each pair.',
+          f'{GAME_CSS}<p class="gmeta muted" style="font-size:14px;margin:0 0 6px">Practice for students</p><h1>Word Choice Check</h1>{wc_game()}{wc_text()}')
+
 if __name__ == '__main__':
-    home(); pages(); guides(); extras(); print('Built DraftTrail pages')
+    home(); pages(); guides(); practice(); extras(); print('Built DraftTrail pages')
 
     # AdSense: no ad code on error, contact and legal pages (no publisher content)
     import re as _re
