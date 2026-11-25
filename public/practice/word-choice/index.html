@@ -54,8 +54,14 @@ if(window.indexedDB&&indexedDB.databases){indexedDB.databases().then(function(d)
 .ptiles b{display:block;font-size:20px;color:var(--brand);margin-bottom:4px}
 @media(max-width:480px){.game{padding:16px 14px}.gq{font-size:38px}.gopts{grid-template-columns:1fr}}
 
+.gshare{display:block;margin:12px auto 0;background:none;border:0;color:var(--brand);font:inherit;font-weight:700;font-size:15px;cursor:pointer;text-decoration:underline}
 .chal{margin-top:10px;background:var(--badge,#C3303A)}
 </style><script>
+function qpShare(b){const g=b.closest('.game'),name=(g.querySelector('h2')||{}).textContent||document.title,url=location.origin+location.pathname,msg='Try this free '+name+' game, no sign-up needed 🎯';
+ const done=t=>{const o=b.textContent;b.textContent=t;setTimeout(()=>b.textContent=o,2200)};
+ if(navigator.share){navigator.share({title:name,text:msg,url}).catch(()=>{})}
+ else if(navigator.clipboard){navigator.clipboard.writeText(msg+' '+url).then(()=>done('✓ Link copied'),()=>done(url))}
+ else done(url)}
 function qpChallenge(b){const g=b.closest('.game'),name=(g.querySelector('h2')||{}).textContent||document.title,score=((g.querySelector('.gbig')||{}).textContent||'').trim(),
  note=((g.querySelector('.gres .muted')||{}).textContent||'').split(' · ')[0].trim(),lvl=note&&!/best|perfect|sharp/i.test(note)?' ('+note+')':'',
  url=location.origin+location.pathname,msg='I got '+score+' on '+name+lvl+'. Can you beat me? 🎯';
@@ -67,7 +73,7 @@ function qpChallenge(b){const g=b.closest('.game'),name=(g.querySelector('h2')||
  <div id="wcSetup">
   <h2>Word Choice Check</h2><p class="gsub">Pick the right word for each sentence. 10 sentences a round.</p>
   <p style="margin:4px 0 14px;font-size:16px">Affect or effect? Fewer or less? Its or it’s? After each answer you’ll see a quick rule to remember.</p>
-  <button class="gbtn" id="wcStart">Start</button>
+  <button class="gbtn" id="wcStart">Start</button><button class="gshare" type="button" onclick="qpShare(this)">↗ Share this game</button>
  </div>
  <div id="wcPlay" hidden>
   <div class="gtop"><span id="wcNum"></span><span>Score: <b id="wcScore">0</b></span></div>
