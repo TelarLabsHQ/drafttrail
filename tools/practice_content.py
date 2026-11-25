@@ -31,7 +31,17 @@ GAME_CSS = '''<style>
 .ptiles a{display:block;border:1px solid var(--line);border-radius:14px;padding:18px;background:var(--card);text-decoration:none;color:var(--fg)}
 .ptiles b{display:block;font-size:20px;color:var(--brand);margin-bottom:4px}
 @media(max-width:480px){.game{padding:16px 14px}.gq{font-size:38px}.gopts{grid-template-columns:1fr}}
-</style>'''
+
+.chal{margin-top:10px;background:var(--badge,#C3303A)}
+</style><script>
+function qpChallenge(b){const g=b.closest('.game'),name=(g.querySelector('h2')||{}).textContent||document.title,score=((g.querySelector('.gbig')||{}).textContent||'').trim(),
+ note=((g.querySelector('.gres .muted')||{}).textContent||'').split(' · ')[0].trim(),lvl=note&&!/best|perfect|sharp/i.test(note)?' ('+note+')':'',
+ url=location.origin+location.pathname,msg='I got '+score+' on '+name+lvl+'. Can you beat me? 🎯';
+ const done=t=>{const o=b.textContent;b.textContent=t;setTimeout(()=>b.textContent=o,2200)};
+ if(navigator.share){navigator.share({title:name,text:msg,url}).catch(()=>{})}
+ else if(navigator.clipboard){navigator.clipboard.writeText(msg+' '+url).then(()=>done('✓ Copied! Paste it to a friend'),()=>done(msg+' '+url))}
+ else done(msg+' '+url)}
+</script>'''
 
 # sentence with ___, choices, correct, why
 WC = [
@@ -102,6 +112,7 @@ def wc_game():
   <p class="glabel">Round complete</p><div class="gbig" id="wcFinal"></div><p id="wcNote" class="muted"></p>
   <ul class="gmiss" id="wcMiss"></ul>
   <div class="grow"><button class="gbtn" id="wcAgain">Play again</button><a class="gbtn ghost" href="#guide" style="text-align:center;text-decoration:none">Read the guide</a></div>
+  <button class="gbtn chal" type="button" onclick="qpChallenge(this)">🎯 Challenge a friend</button>
  </div>
 </div>
 <style>.wsent{font-size:21px;line-height:1.5;text-align:center;margin:14px 0 4px;font-weight:600}.wsent u{display:inline-block;min-width:70px;text-decoration:none;border-bottom:3px solid var(--badge);padding:0 4px}
