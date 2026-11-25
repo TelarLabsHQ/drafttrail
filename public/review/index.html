@@ -179,7 +179,7 @@ function renderReport(){
     <div class="ctrl"><button class="btn pri" id="pbtn">Play</button>
       <input type="range" id="scrub" min="0" max="${s.ops.length}" value="${s.ops.length}" aria-label="Replay position">
       <select id="speed" aria-label="Replay speed"><option value="4">4×</option><option value="10" selected>10×</option><option value="30">30×</option><option value="100">100×</option></select>
-      <span class="clock" id="pclock">${mmss(a.total)}</span></div>
+      <span class="clock" id="pclock">${mmss(a.total)}</span><button class="btn" id="vbtn" title="Save the replay as a short video to share">Save replay as video</button></div>
     <div class="doc" id="doc"></div>
     <div class="legend"><span><i style="background:var(--paste)"></i>Pasted text</span>${a.quotes.length?'<span><i style="background:#cdeedb"></i>Cited quote</span>':''}<span>Long pauses are shortened during replay.</span></div></div>`;
   const ops=s.ops; let arr=build(ops,ops.length), idx=ops.length;
@@ -199,6 +199,7 @@ function renderReport(){
       if(n!==idx) seek(n);
       if(idx>=ops.length){stopPlay(); return} play=requestAnimationFrame(step) };
     play=requestAnimationFrame(step) };
+  $('#vbtn').onclick=()=>{stopPlay(); replayVideo(s)};
 }
 function sessPanel(s){ s.sources=s.sources||[];
   const ss=sessionsOf(s.ops,s.t0); if(ss.length<2&&!s.sources.length) return '';
@@ -223,6 +224,53 @@ function srcPanel(s,a){ s.sources=s.sources||[];
 document.addEventListener('click',e=>{ if(e.target&&e.target.id==='paperBtn'){ const s=subs.find(x=>x.id===sel)||subs[0]; const a=analyze(s.ops); const box=$('#paperBox');
   box.innerHTML=`<div style="background:#fff;color:#111;padding:28px 32px;border-radius:8px;font-family:'Times New Roman',Georgia,serif;line-height:1.7" class="paperwrap">${Cite.html(Cite.model(a.text,s.sources,(s.cfg||{}).style||'cmos-nb'),s.title||s.task,s.name)}</div>`;
   box.hidden=!box.hidden; } });
+
+/* ---------- save the replay as a short video (made in the browser; nothing is uploaded) ---------- */
+let vBusy=false;
+function replayVideo(s){
+  if(vBusy) return; const btn=$('#vbtn'), ops=s.ops||[]; if(!ops.length) return;
+  if(!window.MediaRecorder||!HTMLCanvasElement.prototype.captureStream){ alert('Your browser can’t make videos. Try Chrome, Edge or Safari on a computer.'); return }
+  // shorten long pauses the same way the replay does, then fit the whole replay into 8 to 40 seconds
+  const tc=[]; let acc=0, prev=0; for(const o of ops){ acc+=Math.max(0,Math.min(o.t-prev,1200)); prev=o.t; tc.push(acc) }
+  const D=Math.max(8000,Math.min(40000,acc/10)), k=acc?D/acc:1, HOLD=2500;
+  const W=1080, H=1350, cv=document.createElement('canvas'); cv.width=W; cv.height=H; const c=cv.getContext('2d');
+  const types=['video/mp4;codecs=avc1','video/mp4','video/webm;codecs=vp9','video/webm'], mime=types.find(t=>MediaRecorder.isTypeSupported(t))||'';
+  const rec=new MediaRecorder(cv.captureStream(30),{mimeType:mime,videoBitsPerSecond:5e6}), parts=[];
+  rec.ondataavailable=e=>{if(e.data.size) parts.push(e.data)};
+  const F='"Public Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif', BRAND='#1F3F7A', PAD=70, TOP=250, BOT=H-150, LH=52, wcache=new Map();
+  c.font=`34px ${F}`; const wid=w=>{let v=wcache.get(w); if(v===undefined){v=c.measureText(w).width; wcache.set(w,v)} return v};
+  const wrapLines=(t,arr)=>{ c.font=`34px ${F}`; const lines=[]; let line=[], x=0; const maxW=W-2*PAD-40;
+    const words=[]; let cur='', fl=false; arr.forEach(ch=>{ if(ch.ch==='\n'){ if(cur) words.push([cur,fl]); words.push(['\n',false]); cur=''; fl=false; return }
+      cur+=ch.ch; if(ch.o==='p') fl='p'; else if(ch.o==='q'&&!fl) fl='q'; if(ch.ch===' '){ words.push([cur,fl]); cur=''; fl=false } }); if(cur) words.push([cur,fl]);
+    for(const [w,f] of words){ if(w==='\n'){ lines.push(line); line=[]; x=0; continue } const ww=wid(w); if(x+ww>maxW&&line.length){ lines.push(line); line=[]; x=0 } line.push([w,f,x]); x+=ww }
+    lines.push(line); return lines };
+  const title=(s.task||'Writing assignment').slice(0,80), who=s.name||'';
+  const draw=(arr,ms,done)=>{
+    c.fillStyle='#F3F5F9'; c.fillRect(0,0,W,H);
+    c.fillStyle=BRAND; c.fillRect(0,0,W,12);
+    c.fillStyle='#5B6579'; c.font=`600 26px ${F}`; c.fillText('WRITING REPLAY',PAD,78);
+    c.fillStyle='#141B2B'; c.font=`700 40px ${F}`; let tt=title; while(c.measureText(tt).width>W-2*PAD&&tt.length>10) tt=tt.slice(0,-2); c.fillText(tt+(tt!==title?'…':''),PAD,130);
+    const words=arr.length?(arr.map(x=>x.ch).join('').match(/\S+/g)||[]).length:0;
+    c.fillStyle='#5B6579'; c.font=`28px ${F}`; c.fillText((who?who+'  ·  ':'')+mmss(ms)+' of writing  ·  '+words+' words',PAD,180);
+    c.fillStyle='#fff'; c.strokeStyle='#DCE1EA'; c.lineWidth=2; c.beginPath(); c.roundRect(PAD-20,TOP-50,W-2*PAD+40,BOT-TOP+60,22); c.fill(); c.stroke();
+    const lines=wrapLines('',arr), maxL=Math.floor((BOT-TOP)/LH), start=Math.max(0,lines.length-maxL);
+    c.font=`34px ${F}`; let y=TOP;
+    for(let i=start;i<lines.length;i++){ for(const [w,f,x] of lines[i]){ if(f){ c.fillStyle=f==='p'?'#FFE9A8':'#CDEEDB'; c.fillRect(PAD+x,y-36,wid(w),48) } c.fillStyle='#141B2B'; c.fillText(w,PAD+x,y) } y+=LH }
+    if(!done&&Math.floor(performance.now()/450)%2){ const L=lines[lines.length-1]||[], last=L[L.length-1]; c.fillStyle=BRAND; c.fillRect(PAD+(last?last[2]+wid(last[0]):0)+2,y-LH-30,3,40) }
+    c.fillStyle='#5B6579'; c.font=`24px ${F}`; c.fillText('Highlighted: pasted text',PAD,BOT+50);
+    c.fillStyle=BRAND; c.font=`700 28px ${F}`; c.textAlign='right'; c.fillText('Recorded with DraftTrail · drafttrail.telarlabs.net',W-PAD,H-50); c.textAlign='left';
+  };
+  vBusy=true; const label=btn.textContent; let arr=[], n=0, t0=0, raf=0;
+  rec.onstop=()=>{ vBusy=false; btn.textContent=label; btn.disabled=false; if(!parts.length) return;
+    const blob=new Blob(parts,{type:mime||'video/webm'}), ext=/mp4/.test(mime)?'mp4':'webm', a=document.createElement('a');
+    a.href=URL.createObjectURL(blob); a.download='writing-replay'+(who?'-'+who.replace(/[^\w\- ]+/g,'').trim().replace(/\s+/g,'-').toLowerCase():'')+'.'+ext; document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),10000) };
+  btn.disabled=true; draw(arr,0,false); rec.start(500); t0=performance.now();
+  const step=now=>{ const e=now-t0, vt=e/k; while(n<ops.length&&tc[n]<=vt){ apply(arr,ops[n]); n++ }
+    const done=n>=ops.length; draw(arr,n?ops[n-1].t:0,done);
+    btn.textContent='Making video… '+Math.min(100,Math.round(e/(D+HOLD)*100))+'%';
+    if(e>=D+HOLD){ rec.stop(); return } raf=requestAnimationFrame(step) };
+  raf=requestAnimationFrame(step);
+}
 function stopPlay(){ if(play){cancelAnimationFrame(play); play=null} const b=$('#pbtn'); if(b) b.textContent='Play' }
 
 })();
