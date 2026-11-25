@@ -60,7 +60,7 @@ def page(path, title, desc, body):
 <body>
 <header class="top"><div class="wrap top-in">
   <span class="tl-wrap"><a class="logo" href="/">{LOGO}<span>{E(NAME)}</span></a><a class="tl-by" href="https://telarlabs.net" title="Telar Labs home"><span>by </span>Telar Labs</a><style>.tl-wrap{{display:flex;align-items:center;min-width:0}}.tl-by{{margin-left:10px;font-size:13px;font-weight:500;line-height:1;color:inherit;opacity:.65;text-decoration:none;white-space:nowrap;flex:none}}.tl-by:hover{{opacity:1;text-decoration:underline}}@media(max-width:560px){{.tl-wrap{{flex-direction:column;align-items:flex-start}}.tl-by{{margin:3px 0 0;font-size:11.5px}}}}</style></span>
-  <nav class="nav"><a href="/how-it-works/">How it works</a><a href="/set-up/">Set up a task</a><a href="/for-teachers/">For teachers</a><a href="/guides/">Guides</a><a href="/faq/">FAQ</a></nav>
+  <nav class="nav"><a href="/how-it-works/">How it works</a><a href="/set-up/">Set up a task</a><a href="/for-teachers/">For teachers</a><a href="/prompts/">Prompts</a><a href="/guides/">Guides</a><a href="/faq/">FAQ</a></nav>
   <a class="btn btn-ghost btn-sm" href="/write/">Start writing</a><a class="btn btn-sm" href="/review/">Review files</a>
 </div></header>
 <main>
@@ -69,7 +69,7 @@ def page(path, title, desc, body):
 <footer class="foot"><div class="wrap foot-in">
   <div><a class="logo" href="/">{LOGO}<span>{E(NAME)}</span></a><p class="muted">Free writing-process recorder for students and teachers. Part of the {E(ST)} teacher tools.</p></div>
   <div class="foot-cols">
-    <div><h4>Use it</h4><a href="/write/">Start writing</a><a href="/review/">Review .drafttrail files</a><a href="/how-it-works/">How it works</a><a href="/for-teachers/">For teachers</a><a href="/guides/">Guides</a><a href="/practice/word-choice/">Word Choice Check</a><a href="/faq/">FAQ</a></div>
+    <div><h4>Use it</h4><a href="/write/">Start writing</a><a href="/review/">Review .drafttrail files</a><a href="/how-it-works/">How it works</a><a href="/for-teachers/">For teachers</a><a href="/guides/">Guides</a><a href="/prompts/">Writing prompts</a><a href="/tools/word-counter/">Word counter</a><a href="/tools/readability-checker/">Readability checker</a><a href="/practice/word-choice/">Word Choice Check</a><a href="/faq/">FAQ</a></div>
     <div><h4><a href="https://telarlabs.net" style="color:inherit;margin:0">{E(ST)}</a></h4><a href="https://telarlabs.net">Telar Labs home</a><a href="https://telarlabs.net/guides/">Telar Labs guides</a><a href="/about/">About</a><a href="/privacy/">Privacy policy</a><a href="/terms/">Terms of use</a><a href="/contact/">Contact</a></div>
   </div>
 </div>{family_row()}<div class="wrap fine">&copy; {date.today().year} {E(ST)}.</div></footer>
@@ -258,7 +258,7 @@ def pages():
 
 def extras():
     open(os.path.join(PUB, 'favicon.svg'), 'w').write(LOGO.replace('class="logo-mark" ', 'xmlns="http://www.w3.org/2000/svg" '))
-    urls = ['/', '/how-it-works/', '/set-up/', '/for-teachers/', '/faq/', '/guides/'] + [f'/guides/{g["slug"]}/' for g in GUIDES] + ['/practice/word-choice/', '/about/', '/privacy/', '/terms/', '/contact/']
+    urls = ['/', '/how-it-works/', '/set-up/', '/for-teachers/', '/faq/', '/guides/'] + [f'/guides/{g["slug"]}/' for g in GUIDES] + ['/practice/word-choice/', '/tools/word-counter/', '/tools/readability-checker/', '/prompts/'] + [f'/prompts/{t["slug"]}/' for t in PTYPES] + ['/about/', '/privacy/', '/terms/', '/contact/']
     open(os.path.join(PUB, 'sitemap.xml'), 'w').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'<url><loc>{URL}{u}</loc></url>\n' for u in urls) + '</urlset>\n')
     open(os.path.join(PUB, 'robots.txt'), 'w').write(f'User-agent: *\nDisallow: /write/\nDisallow: /review/\nDisallow: /cdn-cgi/\n\nUser-agent: Mediapartners-Google\nAllow: /\n\nSitemap: {URL}/sitemap.xml\n')
     if CFG['adsense_client']:
@@ -288,8 +288,37 @@ def practice():
           'A free game for students: affect or effect, fewer or less, its or it’s and more. Practice commonly confused words, with a quick guide to each pair.',
           f'{GAME_CSS}<p class="gmeta muted" style="font-size:14px;margin:0 0 6px">Practice for students</p><h1>Word Choice Check</h1>{wc_game()}{wc_text()}')
 
+# ---------------------------------------------------------------- writing tools and prompts
+import urllib.parse as _up
+from writing_tools import TOOLS as WTOOLS, CSS as WCSS
+from prompts_content import TYPES as PTYPES, HUB_INTRO, HUB_TEXT
+PT_CSS = ('<style>.ptable{width:100%;border-collapse:collapse;font-size:15px;margin:10px 0 18px}.ptable th,.ptable td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}'
+          '.ptable th{font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}'
+          '.plist{list-style:none;padding:0;display:flex;flex-direction:column;gap:10px}.plist li{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--card);display:flex;gap:12px;align-items:center;justify-content:space-between}'
+          '.plist a{flex:none;font-weight:700;white-space:nowrap}.ptiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:16px 0}'
+          '.ptiles a{display:block;border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--card);text-decoration:none;color:var(--fg)}.ptiles b{display:block;font-size:19px;color:var(--brand);margin-bottom:4px}'
+          '@media(max-width:560px){.plist li{flex-direction:column;align-items:flex-start}}</style>')
+def wtools():
+    for path, title, short, desc, tool, text in WTOOLS:
+        other = ''.join(f'<li><a href="{p}">{E(s)}</a></li>' for p, _, s, _, _, _ in WTOOLS if p != path)
+        prose(path, title, desc, f'{WCSS}{PT_CSS}<p class="muted" style="font-size:14px;margin:0 0 6px">Free writing tools</p><h1>{E(short)}</h1>{tool}{text}'
+              f'<h2>More free tools</h2><ul>{other}<li><a href="/prompts/">Writing prompts for every grade</a></li><li><a href="/practice/word-choice/">Word Choice Check</a></li></ul>')
+    tiles = ''.join(f'<a href="/prompts/{t["slug"]}/"><b>{E(t["name"])}</b>{E(t["intro"])}</a>' for t in PTYPES)
+    prose('/prompts/', 'Writing Prompts for Students: 100+ Free Prompts by Grade', 'Over 100 free writing prompts for elementary, middle and high school: narrative, persuasive, opinion, informative, descriptive and journal. Start writing in one tap.',
+          f'{PT_CSS}<h1>Writing prompts</h1>{HUB_INTRO}<div class="ptiles">{tiles}</div>{HUB_TEXT}')
+    for t in PTYPES:
+        bands = ''.join(f'<h2>{E(b)}</h2><ul class="plist">' + ''.join(f'<li><span>{E(q)}</span><a href="/write/?task={_up.quote(q)}">Write this →</a></li>' for q in ps) + '</ul>' for b, ps in t['P'].items())
+        tips = ''.join(f'<li>{E(x)}</li>' for x in t['tips'])
+        others = ''.join(f'<li><a href="/prompts/{o["slug"]}/">{E(o["name"])} writing prompts</a></li>' for o in PTYPES if o is not t)
+        prose(f'/prompts/{t["slug"]}/', t['title'], t['desc'],
+              f'{PT_CSS}<p class="muted" style="font-size:14px;margin:0 0 6px"><a href="/prompts/">Writing prompts</a></p><h1>{E(t["name"])} writing prompts</h1>'
+              f'<p class="lead">{E(t["intro"])} Tap <b>Write this</b> to open a prompt in DraftTrail and start writing.</p>'
+              f'<h2>Tips for {E(t["name"].lower())} writing</h2><ul>{tips}</ul>{bands}'
+              f'<h2>For teachers</h2><p>Share a prompt’s <b>Write this</b> link with your class, or use <a href="/set-up/">Set up a task</a> to add a time limit. Students hand in a file you can replay to see how the writing was built.</p>'
+              f'<h2>More prompts</h2><ul>{others}</ul>')
+
 if __name__ == '__main__':
-    home(); pages(); guides(); practice(); extras(); print('Built DraftTrail pages')
+    home(); pages(); guides(); practice(); wtools(); extras(); print('Built DraftTrail pages')
 
     # AdSense: no ad code on error, contact and legal pages (no publisher content)
     import re as _re

@@ -1,0 +1,111 @@
+"""Writing prompts library (/prompts/...). Every prompt has a 'Write this' link that opens DraftTrail
+with the prompt as the task (/write/?task=..., max 140 characters)."""
+
+TYPES = [
+ dict(slug='narrative', name='Narrative', title='Narrative Writing Prompts for Every Grade',
+  desc='Free narrative writing prompts for elementary, middle and high school, with tips for writing a strong story. Open any prompt and start writing in one tap.',
+  intro='A narrative tells a story: real or imagined, with characters, a setting, a problem and how it turns out.',
+  tips=['Start close to the action. Skip the alarm clock and begin when something happens.', 'Give your character a want and something in the way.',
+        'Show feelings through actions and dialogue instead of naming them.', 'Use time words (later that night, the next morning) to move the story along.',
+        'End with a change: what did the character learn, or how are things different now?'],
+  P={'Elementary': ['Write about a day when your pet could talk for one hour. What did it say?', 'You find a tiny door at the bottom of a tree. What happens when you open it?',
+                    'Tell about a time you helped someone. How did it feel?', 'Your shoes can take you anywhere for one day. Where do you go?',
+                    'A friendly dragon moves in next door. Write about your first day as neighbors.', 'Write about the best birthday you can imagine.'],
+     'Middle school': ['Write about a time you had to make a hard choice. What did you decide, and why?', 'You wake up and everyone can hear your thoughts. Tell the story of that day.',
+                       'A message in a bottle washes up on the beach, addressed to you. What does it say, and what do you do?', 'Write about the first time you tried something you were afraid of.',
+                       'Your class goes on a field trip, and the bus takes a wrong turn into the past. What happens?', 'Tell a story about a lost object and how it found its way home.'],
+     'High school': ['Write about a moment that changed how you saw a family member.', 'A stranger hands you a key and says, “You’ll know when to use it.” Tell what happens next.',
+                     'Write a story that takes place entirely in one elevator ride.', 'Tell the story of a disagreement from the other person’s point of view.',
+                     'Write about a small decision that turned out to matter more than you expected.', 'In 2050, a teenager finds an old smartphone in an attic. Tell their story.']}),
+ dict(slug='persuasive', name='Persuasive', title='Persuasive Writing Prompts with Tips',
+  desc='Free persuasive and argumentative writing prompts for every grade, plus a simple structure for a convincing essay. Start writing any prompt in one tap.',
+  intro='Persuasive writing tries to convince the reader to agree with you, or to do something, using reasons and evidence.',
+  tips=['State your position clearly in the first paragraph.', 'Give at least three reasons, each with an example or fact.',
+        'Answer the strongest argument on the other side, then explain why your view still holds.', 'Avoid fallacies like “everyone does it”. See our guide to spotting them.',
+        'End with a call to action: what should the reader do now?'],
+  P={'Elementary': ['Should students have homework on weekends? Give three reasons.', 'Convince your family to adopt a pet. What kind, and why?',
+                    'Should recess be longer? Write to your principal.', 'Which is the best season of the year? Persuade a friend.',
+                    'Should kids be allowed to choose their own bedtime? Explain your view.', 'Write a letter asking your town to build a new playground.'],
+     'Middle school': ['Should schools start later in the morning? Use reasons and examples.', 'Should students be allowed to use phones during lunch? Argue your position.',
+                       'Should every student learn a second language? Persuade your school board.', 'Are video games good for learning? Make your case.',
+                       'Should school uniforms be required? Argue for or against.', 'Convince your community to start a recycling or composting program.'],
+     'High school': ['Should voting age be lowered to 16? Argue your position with evidence.', 'Should students be allowed to use AI tools for homework? Make your case.',
+                     'Is social media doing more harm than good to teenagers? Take a side.', 'Should community service be required to graduate? Argue for or against.',
+                     'Should cities ban cars from downtown areas? Persuade your city council.', 'Is a four-day school week a good idea? Make a convincing argument.']}),
+ dict(slug='opinion', name='Opinion', title='Opinion Writing Prompts for Kids and Teens',
+  desc='Free opinion writing prompts for elementary, middle and high school students, with a simple opinion paragraph structure. Start writing any prompt in one tap.',
+  intro='Opinion writing shares what you think about a topic and explains why, with reasons that support your view.',
+  tips=['Use the OREO plan: Opinion, Reason, Example, Opinion restated.', 'Begin with a clear statement: “I believe…” or “In my opinion…”.',
+        'Use linking words: because, for example, also, as a result.', 'Give real examples from your own life, books or the news.',
+        'Finish by restating your opinion in new words.'],
+  P={'Elementary': ['What is the best book you have read? Why should others read it?', 'Which animal would make the best class pet? Why?',
+                    'What is the most important rule at school? Explain why.', 'Is it better to be a kid or a grown-up? Tell why you think so.',
+                    'What is your favorite food, and why is it the best?', 'Should every school have a garden? Share your opinion.'],
+     'Middle school': ['What is one invention the world could not live without? Explain.', 'Is it better to read the book or watch the movie first? Why?',
+                       'Which subject should every student study, and why?', 'What makes someone a good friend? Share your opinion with examples.',
+                       'Should teens have a part-time job during the school year? Explain your view.', 'Which historical figure would you most like to meet, and why?'],
+     'High school': ['What is the most important skill school should teach that it doesn’t? Explain.', 'Is it more important to be liked or respected? Defend your view.',
+                     'Should people be judged by their past mistakes? Share your opinion.', 'What is one change that would improve your community the most?',
+                     'Does technology make people more or less connected? Explain.', 'Is success more about talent or effort? Give your opinion with examples.']}),
+ dict(slug='informative', name='Informative', title='Informative and Expository Writing Prompts',
+  desc='Free informative (expository) writing prompts for every grade, with tips for clear explanations. Open any prompt and start writing in one tap.',
+  intro='Informative or expository writing explains a topic, a process or an idea clearly, using facts rather than opinions.',
+  tips=['Start with a clear main idea that tells the reader what they will learn.', 'Organize by steps, categories or cause and effect.',
+        'Use headings or topic sentences so the reader can follow along.', 'Define any word your reader might not know.',
+        'Check every fact, and say where it came from.'],
+  P={'Elementary': ['Explain how to make your favorite sandwich, step by step.', 'Describe how a seed grows into a plant.',
+                    'Teach a younger student how to play your favorite game.', 'Explain why we need to sleep.',
+                    'Describe what a firefighter does during a day.', 'Explain how to take care of a pet fish, dog or cat.'],
+     'Middle school': ['Explain how the water cycle works.', 'Describe the causes and effects of an earthquake.',
+                       'Explain how to stay safe online, with three main tips.', 'Describe a holiday or tradition from your culture to someone who has never seen it.',
+                       'Explain how a bill becomes a law in your country.', 'Describe how volcanoes form and why they erupt.'],
+     'High school': ['Explain how vaccines help the body fight disease.', 'Describe the main causes of climate change and their effects.',
+                     'Explain how compound interest works, with an example.', 'Describe how a major invention changed daily life.',
+                     'Explain how social media algorithms decide what you see.', 'Describe the process of applying to college or for a first job.']}),
+ dict(slug='descriptive', name='Descriptive', title='Descriptive Writing Prompts: Paint a Picture with Words',
+  desc='Free descriptive writing prompts for every grade, with tips for using the five senses. Start writing any prompt in one tap.',
+  intro='Descriptive writing paints a picture with words, so the reader can see, hear, smell, taste and feel what you describe.',
+  tips=['Use all five senses, not just sight.', 'Choose precise words: “sprinted” instead of “ran fast”.',
+        'Use comparisons (similes and metaphors) to make images vivid.', 'Move in an order: near to far, top to bottom, or the order you’d notice things.',
+        'Focus on a few strong details instead of listing everything.'],
+  P={'Elementary': ['Describe your favorite place at home using all five senses.', 'Describe a rainy day so the reader feels like they are there.',
+                    'Describe the most delicious meal you have ever eaten.', 'Describe a busy market or store.',
+                    'Describe your best friend without saying their name.', 'Describe what you see, hear and smell at the beach or in a park.'],
+     'Middle school': ['Describe a city street at night.', 'Describe a storm from inside a small house.',
+                       'Describe your school cafeteria at lunchtime.', 'Describe a place that feels peaceful to you.',
+                       'Describe an old object in your home and the story it seems to tell.', 'Describe the first snowfall, or the hottest day of the year.'],
+     'High school': ['Describe a crowded train station from the point of view of someone waiting for a person they miss.', 'Describe an abandoned building as nature takes it back.',
+                     'Describe a family gathering using only sounds and smells.', 'Describe a place you have only seen in a photograph.',
+                     'Describe a moment of silence in a usually noisy place.', 'Describe your neighborhood as it might look in 50 years.']}),
+ dict(slug='reflective', name='Reflective and journal', title='Journal and Reflective Writing Prompts for Students',
+  desc='Free journal and reflective writing prompts for students of every age: goals, gratitude, learning and growth. Start writing any prompt in one tap.',
+  intro='Reflective writing looks back on an experience to understand what it meant and what you learned. Journal prompts are a quick, low-pressure way to build the writing habit.',
+  tips=['Be honest. Reflection works best when you write what you really think.', 'Describe what happened, then explain what it meant to you.',
+        'Ask yourself: what would I do differently next time?', 'Write regularly, even five minutes a day.',
+        'Reread old entries to see how your thinking has changed.'],
+  P={'Elementary': ['What made you smile today?', 'Write about something new you learned this week.',
+                    'Who is someone you are thankful for, and why?', 'What is something you are getting better at?',
+                    'If you could give your teacher one gift, what would it be?', 'Write about a mistake you made and what you learned from it.'],
+     'Middle school': ['What is one goal you want to reach this year, and what is your first step?', 'Write about a time you changed your mind about something.',
+                       'What does being a good classmate look like?', 'Describe a challenge you are facing and three ways to handle it.',
+                       'What is something you wish adults understood about people your age?', 'Look back on this term. What are you proud of?'],
+     'High school': ['What is a belief you hold that has changed in the last year? Why?', 'Write a letter to yourself five years from now.',
+                     'What did a failure teach you that success could not?', 'Which piece of advice has stayed with you, and why?',
+                     'Reflect on how you study best. What works, and what doesn’t?', 'What kind of person do you want to be known as?']}),
+]
+
+def check():
+    for t in TYPES:
+        for band, ps in t['P'].items():
+            for p in ps: assert len(p) <= 140, (len(p), p)
+check()
+
+HUB_INTRO = '''<p class="lead">Over 100 free writing prompts for elementary, middle and high school, sorted by type. Tap <b>Write this</b> on any prompt to open it in DraftTrail and start writing straight away.</p>'''
+HUB_TEXT = '''<h2>How to use these prompts</h2>
+<ul><li><b>Students:</b> pick a prompt, tap <b>Write this</b>, and write. DraftTrail records how your writing grows, so you can show your teacher it’s your own work.</li>
+<li><b>Teachers:</b> choose a prompt for the class and share the <b>Write this</b> link, or go to <a href="/set-up/">Set up a task</a> to add a time limit and rules. Students hand in a file you can replay.</li>
+<li><b>Warm-ups:</b> journal and descriptive prompts make great 5 to 10 minute starters at the beginning of class.</li></ul>
+<h2>Writing in the age of AI</h2>
+<p>Prompts like these are easy to paste into a chatbot. When students write in DraftTrail, teachers can replay the writing and see the typing, pauses, revisions and pastes. That makes the process visible, and it encourages students to do the thinking themselves. Read more in <a href="https://telarlabs.net/guides/writing-process-age-of-ai/">how to see the writing process in the age of AI</a>.</p>
+<h2>More free writing tools</h2>
+<p>Check length with the <a href="/tools/word-counter/">word counter</a>, test clarity with the <a href="/tools/readability-checker/">readability checker</a>, and practice tricky words with <a href="/practice/word-choice/">Word Choice Check</a>.</p>'''

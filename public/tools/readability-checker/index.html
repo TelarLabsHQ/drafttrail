@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Readability Checker: Grade Level and Long Sentences | DraftTrail</title>
+<meta name="description" content="Check the reading level of your writing with Flesch–Kincaid grade level and reading ease, and see long sentences highlighted. Free and private.">
+<link rel="canonical" href="https://drafttrail.telarlabs.net/tools/readability-checker/">
+<meta property="og:title" content="Readability Checker: Grade Level and Long Sentences | DraftTrail"><meta property="og:description" content="Check the reading level of your writing with Flesch–Kincaid grade level and reading ease, and see long sentences highlighted. Free and private."><meta property="og:url" content="https://drafttrail.telarlabs.net/tools/readability-checker/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#1F3F7A">
+<link rel="preload" href="/assets/fonts/public-sans-400.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/assets/fonts/fonts.css">
+<link rel="stylesheet" href="/assets/site.css?v=004cc0f4">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4326677240395780" crossorigin="anonymous"></script>
+</head>
+<body>
+<header class="top"><div class="wrap top-in">
+  <span class="tl-wrap"><a class="logo" href="/"><svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="3" width="20" height="26" rx="3" fill="#1F3F7A"/><path d="M9 10h10M9 15h10M9 20h6" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="23" r="6" fill="#C3303A"/><path d="M21.5 23l1.8 1.8 3.2-3.4" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>DraftTrail</span></a><a class="tl-by" href="https://telarlabs.net" title="Telar Labs home"><span>by </span>Telar Labs</a><style>.tl-wrap{display:flex;align-items:center;min-width:0}.tl-by{margin-left:10px;font-size:13px;font-weight:500;line-height:1;color:inherit;opacity:.65;text-decoration:none;white-space:nowrap;flex:none}.tl-by:hover{opacity:1;text-decoration:underline}@media(max-width:560px){.tl-wrap{flex-direction:column;align-items:flex-start}.tl-by{margin:3px 0 0;font-size:11.5px}}</style></span>
+  <nav class="nav"><a href="/how-it-works/">How it works</a><a href="/set-up/">Set up a task</a><a href="/for-teachers/">For teachers</a><a href="/prompts/">Prompts</a><a href="/guides/">Guides</a><a href="/faq/">FAQ</a></nav>
+  <a class="btn btn-ghost btn-sm" href="/write/">Start writing</a><a class="btn btn-sm" href="/review/">Review files</a>
+</div></header>
+<main>
+<article class="wrap prose"><style>
+.wt{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin:8px 0 34px;box-shadow:0 10px 30px rgba(20,27,43,.07)}
+.wt textarea{width:100%;min-height:230px;border:1px solid var(--line);border-radius:12px;padding:14px;font:17px/1.6 var(--body);color:var(--fg);background:var(--bg);resize:vertical}
+.wt .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:14px}
+.wt .stat{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff}.wt .stat b{display:block;font-size:26px;font-family:var(--head);color:var(--brand);line-height:1.2}
+.wt .stat span{font-size:13px;color:var(--muted)}
+.wt .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+.wt button{font:inherit;font-weight:700;font-size:15px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--fg);padding:8px 14px;cursor:pointer}
+.wt .pri{background:var(--brand);color:#fff;border-color:var(--brand)}
+.wt .lvl{margin-top:14px;padding:14px;border-radius:12px;background:var(--info-bg)}
+.wt .lvl b{font-size:20px}
+.wt .hl{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff;line-height:1.8;white-space:pre-wrap}
+.wt .hl mark{background:var(--warn-bg);border-bottom:2px solid var(--warn);color:inherit;padding:1px 0}.wt .hl mark.vl{background:var(--bad-bg);border-color:var(--bad)}
+.wt .key{font-size:14px;color:var(--muted);margin-top:8px}.wt .key i{display:inline-block;width:14px;height:10px;border-radius:3px;vertical-align:middle;margin:0 4px 0 10px}
+</style><style>.ptable{width:100%;border-collapse:collapse;font-size:15px;margin:10px 0 18px}.ptable th,.ptable td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}.ptable th{font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}.plist{list-style:none;padding:0;display:flex;flex-direction:column;gap:10px}.plist li{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--card);display:flex;gap:12px;align-items:center;justify-content:space-between}.plist a{flex:none;font-weight:700;white-space:nowrap}.ptiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:16px 0}.ptiles a{display:block;border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--card);text-decoration:none;color:var(--fg)}.ptiles b{display:block;font-size:19px;color:var(--brand);margin-bottom:4px}@media(max-width:560px){.plist li{flex-direction:column;align-items:flex-start}}</style><p class="muted" style="font-size:14px;margin:0 0 6px">Free writing tools</p><h1>Readability checker</h1><div class="wt" id="rc">
+ <textarea id="rcT" placeholder="Paste a paragraph or more of English text…" aria-label="Your text"></textarea>
+ <div class="lvl" id="rcL">Paste some text to see its reading level.</div>
+ <div class="stats">
+  <div class="stat"><b id="rcG">–</b><span>Flesch–Kincaid grade</span></div><div class="stat"><b id="rcE">–</b><span>reading ease (0–100)</span></div>
+  <div class="stat"><b id="rcA">–</b><span>average words per sentence</span></div><div class="stat"><b id="rcLong">0</b><span>long sentences (over 25 words)</span></div>
+ </div>
+ <div class="hl" id="rcH" hidden></div>
+ <p class="key"><i style="background:var(--warn-bg);border-bottom:2px solid var(--warn)"></i>long sentence (25–34 words) <i style="background:var(--bad-bg);border-bottom:2px solid var(--bad)"></i>very long sentence (35+ words)</p>
+ <p class="key">Works best with at least 100 words of English. Your text stays in this browser.</p>
+</div>
+<script>(()=>{
+const TA={
+ words:t=>(t.match(/[\p{L}\p{N}][\p{L}\p{N}'’\-]*/gu)||[]),
+ sentences:t=>t.replace(/\s+/g,' ').trim().split(/(?<=[.!?…])\s+(?=[\p{Lu}\p{N}"“‘(\[])/u).map(s=>s.trim()).filter(s=>TA.words(s).length),
+ paragraphs:t=>t.split(/\n\s*\n/).filter(p=>p.trim()).length,
+ syl:w=>{w=w.toLowerCase().replace(/[^a-z]/g,'');if(!w)return 0;if(w.length<=3)return 1;
+  w=w.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/,'').replace(/^y/,'');const m=w.match(/[aeiouy]{1,2}/g);return Math.max(1,m?m.length:1)},
+ fk:t=>{const W=TA.words(t),S=Math.max(1,TA.sentences(t).length),sy=W.reduce((a,w)=>a+TA.syl(w),0);if(!W.length)return null;
+  return {grade:0.39*W.length/S+11.8*sy/W.length-15.59,ease:206.835-1.015*W.length/S-84.6*sy/W.length,wps:W.length/S}},
+ time:(n,wpm)=>{const m=n/wpm;return m<1?Math.max(1,Math.round(m*60))+' sec':Math.floor(m)+' min '+(Math.round(m%1*60)?Math.round(m%1*60)+' sec':'')}
+};
+const store={get:(k,d)=>{try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+
+const $=i=>document.getElementById(i),esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));$('rcT').value=store.get('dt-rc','');
+const band=e=>e>=90?['very easy','about age 10 to 11']:e>=80?['easy','about age 11 to 12']:e>=70?['fairly easy','about age 12 to 13']:e>=60?['plain English','about age 13 to 15']:e>=50?['fairly difficult','high school']:e>=30?['difficult','college']:['very difficult','university graduate'];
+function upd(){const t=$('rcT').value;store.set('dt-rc',t);const r=TA.fk(t),S=TA.sentences(t);
+ if(!r||TA.words(t).length<10){$('rcL').textContent='Paste some text to see its reading level.';['rcG','rcE','rcA'].forEach(i=>$(i).textContent='–');$('rcLong').textContent=0;$('rcH').hidden=true;return}
+ const g=Math.max(0,r.grade),e=Math.min(100,Math.max(0,r.ease)),[d,who]=band(e);
+ $('rcG').textContent=g.toFixed(1);$('rcE').textContent=Math.round(e);$('rcA').textContent=r.wps.toFixed(1);
+ $('rcL').innerHTML='<b>'+d[0].toUpperCase()+d.slice(1)+'</b> to read: about US grade '+Math.round(g)+' ('+who+').';
+ let n=0;$('rcH').innerHTML=S.map(s=>{const k=TA.words(s).length;if(k>=25)n++;return k>=35?'<mark class="vl" title="'+k+' words">'+esc(s)+'</mark>':k>=25?'<mark title="'+k+' words">'+esc(s)+'</mark>':esc(s)}).join(' ');
+ $('rcLong').textContent=n;$('rcH').hidden=false}
+$('rcT').oninput=upd;upd()})();</script><h2>What the readability scores mean</h2>
+<p>The checker uses two well-known formulas based on the length of your sentences and the number of syllables in your words. Longer sentences and longer words make text harder to read.</p>
+<ul><li><b>Flesch–Kincaid grade level</b> estimates the US school grade needed to understand the text. A score of 8 means an average 8th-grade student (about age 13 to 14) should follow it.</li>
+<li><b>Flesch reading ease</b> runs from 0 to 100. Higher is easier: 60 to 70 is plain English, 30 or below is very hard.</li></ul>
+<table class="ptable"><thead><tr><th>Reading ease</th><th>How it reads</th><th>Good for</th></tr></thead><tbody>
+<tr><td>80–100</td><td>Easy</td><td>Children’s stories, instructions for young students</td></tr>
+<tr><td>60–80</td><td>Plain English</td><td>Most school writing, websites, emails, news</td></tr>
+<tr><td>40–60</td><td>Fairly difficult</td><td>High school essays, reports</td></tr>
+<tr><td>0–40</td><td>Difficult</td><td>Academic papers, legal and technical writing</td></tr></tbody></table>
+
+<h2>Find the long sentences</h2>
+<p>Below the scores, the checker shows your text with long sentences highlighted: yellow for 25 to 34 words and red for 35 or more. Long sentences aren’t wrong, but too many in a row make writing tiring to read. Try splitting one into two, or turning a list inside a sentence into bullet points.</p>
+
+<h2>How to make writing easier to read</h2>
+<ul><li><b>One idea per sentence.</b> If a sentence has three commas and an “and”, it may be two sentences.</li>
+<li><b>Prefer short, common words.</b> <i>Use</i> instead of <i>utilize</i>, <i>help</i> instead of <i>facilitate</i>.</li>
+<li><b>Mix sentence lengths.</b> A short sentence after two long ones gives the reader a rest. Like this.</li>
+<li><b>Use active voice.</b> “The class planted the trees” is clearer than “The trees were planted by the class”.</li>
+<li><b>Know your reader.</b> A science report for your teacher can be harder than a newsletter for parents.</li></ul>
+
+<h2>For teachers</h2>
+<p>Use the checker to match reading passages and instructions to your students’ level, or have students compare the reading level of two drafts. Readability formulas only measure sentence and word length; they don’t judge ideas, accuracy or style, so use them as one guide among many.</p>
+<p>Want to see how a piece of writing was built, not just how it reads? Try <a href="/write/">writing in DraftTrail</a>, and count your words with the <a href="/tools/word-counter/">word counter</a>.</p>
+<h2>Questions</h2>
+<p><b>Does it work for other languages?</b> The formulas are designed for English. Scores for other languages won’t be accurate.</p>
+<p><b>Is my text private?</b> Yes. Everything runs in your browser; nothing is uploaded.</p><h2>More free tools</h2><ul><li><a href="/tools/word-counter/">Word counter</a></li><li><a href="/prompts/">Writing prompts for every grade</a></li><li><a href="/practice/word-choice/">Word Choice Check</a></li></ul></article>
+</main>
+<footer class="foot"><div class="wrap foot-in">
+  <div><a class="logo" href="/"><svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="3" width="20" height="26" rx="3" fill="#1F3F7A"/><path d="M9 10h10M9 15h10M9 20h6" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="23" r="6" fill="#C3303A"/><path d="M21.5 23l1.8 1.8 3.2-3.4" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>DraftTrail</span></a><p class="muted">Free writing-process recorder for students and teachers. Part of the Telar Labs teacher tools.</p></div>
+  <div class="foot-cols">
+    <div><h4>Use it</h4><a href="/write/">Start writing</a><a href="/review/">Review .drafttrail files</a><a href="/how-it-works/">How it works</a><a href="/for-teachers/">For teachers</a><a href="/guides/">Guides</a><a href="/prompts/">Writing prompts</a><a href="/tools/word-counter/">Word counter</a><a href="/tools/readability-checker/">Readability checker</a><a href="/practice/word-choice/">Word Choice Check</a><a href="/faq/">FAQ</a></div>
+    <div><h4><a href="https://telarlabs.net" style="color:inherit;margin:0">Telar Labs</a></h4><a href="https://telarlabs.net">Telar Labs home</a><a href="https://telarlabs.net/guides/">Telar Labs guides</a><a href="/about/">About</a><a href="/privacy/">Privacy policy</a><a href="/terms/">Terms of use</a><a href="/contact/">Contact</a></div>
+  </div>
+</div><div class="wrap family"><span class="family-h"><a href="https://telarlabs.net">More from Telar Labs</a>:</span><a class="app-telarclips" href="https://clips.telarlabs.net" title="Free motion backgrounds and illustrated scenes for class videos, greetings and school programs.">Telar Clips</a><a class="app-pizarrapad" href="https://pizarrapad.telarlabs.net" title="Free online whiteboard, blackboard and greenboard for the classroom projector.">PizarraPad</a><a class="app-quizpolice" href="https://quizpolice.telarlabs.net" title="Free quiz monitor that shows you when students leave an online quiz.">QuizPolice</a><a class="app-tixward" href="https://tixward.telarlabs.net" title="Event tickets and free bookings for courts and rooms, paid directly to organizers. Free for most events.">Tixward</a></div><div class="wrap fine">&copy; 2026 Telar Labs.</div></footer>
+</body>
+</html>
