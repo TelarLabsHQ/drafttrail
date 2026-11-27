@@ -60,7 +60,7 @@ def page(path, title, desc, body):
 <body>
 <header class="top"><div class="wrap top-in">
   <span class="tl-wrap"><a class="logo" href="/">{LOGO}<span>{E(NAME)}</span></a><a class="tl-by" href="https://telarlabs.net" title="Telar Labs home"><span>by </span>Telar Labs</a><style>.tl-wrap{{display:flex;align-items:center;min-width:0}}.tl-by{{margin-left:10px;font-size:13px;font-weight:500;line-height:1;color:inherit;opacity:.65;text-decoration:none;white-space:nowrap;flex:none}}.tl-by:hover{{opacity:1;text-decoration:underline}}@media(max-width:560px){{.tl-wrap{{flex-direction:column;align-items:flex-start}}.tl-by{{margin:3px 0 0;font-size:11.5px}}}}</style></span>
-  <nav class="nav"><a href="/how-it-works/">How it works</a><a href="/set-up/">Set up a task</a><a href="/for-teachers/">For teachers</a><a href="/prompts/">Prompts</a><a href="/guides/">Guides</a><a href="/faq/">FAQ</a></nav>
+  <nav class="nav"><a class="nav-tools" href="/tools/">🧰 Free tools</a><a href="/how-it-works/">How it works</a><a href="/set-up/">Set up a task</a><a href="/for-teachers/">For teachers</a><a href="/prompts/">Prompts</a><a href="/guides/">Guides</a></nav>
   <a class="btn btn-ghost btn-sm" href="/write/">Start writing</a><a class="btn btn-sm" href="/review/">Review files</a>
 </div></header>
 <main>
@@ -69,7 +69,7 @@ def page(path, title, desc, body):
 <footer class="foot"><div class="wrap foot-in">
   <div><a class="logo" href="/">{LOGO}<span>{E(NAME)}</span></a><p class="muted">Free writing-process recorder for students and teachers. Part of the {E(ST)} teacher tools.</p></div>
   <div class="foot-cols">
-    <div><h4>Use it</h4><a href="/write/">Start writing</a><a href="/review/">Review .drafttrail files</a><a href="/how-it-works/">How it works</a><a href="/for-teachers/">For teachers</a><a href="/guides/">Guides</a><a href="/prompts/">Writing prompts</a><a href="/tools/word-counter/">Word counter</a><a href="/tools/readability-checker/">Readability checker</a><a href="/tools/typing-test/">Typing speed test</a><a href="/practice/word-choice/">Word Choice Check</a><a href="/faq/">FAQ</a></div>
+    <div><h4>Use it</h4><a href="/write/">Start writing</a><a href="/review/">Review .drafttrail files</a><a href="/how-it-works/">How it works</a><a href="/for-teachers/">For teachers</a><a href="/guides/">Guides</a><a href="/tools/">Free tools</a><a href="/prompts/">Writing prompts</a><a href="/tools/word-counter/">Word counter</a><a href="/tools/readability-checker/">Readability checker</a><a href="/tools/typing-test/">Typing speed test</a><a href="/practice/word-choice/">Word Choice Check</a><a href="/faq/">FAQ</a></div>
     <div><h4><a href="https://telarlabs.net" style="color:inherit;margin:0">{E(ST)}</a></h4><a href="https://telarlabs.net">Telar Labs home</a><a href="https://telarlabs.net/guides/">Telar Labs guides</a><a href="/about/">About</a><a href="/privacy/">Privacy policy</a><a href="/terms/">Terms of use</a><a href="/contact/">Contact</a></div>
   </div>
 </div>{family_row()}<div class="wrap fine">&copy; {date.today().year} {E(ST)}.</div></footer>
@@ -94,7 +94,7 @@ def home():
   <div><p class="eyebrow">Free · No accounts · Nothing uploaded</p>
   <h1>See how the writing was made</h1>
   <p class="hero-sub">In the age of AI, the finished essay isn't enough. DraftTrail records the writing process: typing, pauses, revisions and pastes, so teachers can replay it and students can prove their work is their own.</p>
-  <div class="cta"><a class="btn btn-big" href="/write/">Start writing</a><a class="btn btn-ghost btn-big" href="/set-up/">Teachers: set up a task</a><a class="btn btn-ghost btn-big" href="/review/">Review files</a></div></div>
+  <div class="cta"><a class="btn btn-big" href="/write/">Start writing</a><a class="btn btn-ghost btn-big" href="/set-up/">Teachers: set up a task</a><a class="btn btn-ghost btn-big" href="/review/">Review files</a><a class="btn btn-ghost btn-big" href="/tools/">🧰 Free tools</a></div></div>
   <div class="mock"><div class="mrow"><b>Emma Johnson</b><span class="pill p-lock">2 to review</span></div>
    <div class="mlist"><div><span>Pasted 76 words at 2:41</span></div><div><span>58% of the essay was pasted</span></div></div>
    <div class="mchips"><span class="c-info">212<br><small>Words</small></span><span class="c-bad">58%<br><small>Pasted</small></span><span class="c-warn">4:10<br><small>Active</small></span><span class="c-ok">1<br><small>Session</small></span></div></div>
@@ -106,6 +106,7 @@ def home():
 <li><h3>Hand in the file</h3><p>Tap <b>Download DraftTrail file</b> and attach it with the writing, for example in Google Classroom.</p></li>
 <li><h3>Teacher replays it</h3><p>Open the files on <a href="/review/">the review page</a> to see flags, a timeline and a replay of each essay.</p></li></ol></section>
 <section class="wrap section"><div class="callout"><h2>DraftTrail is a conversation starter</h2><p>A big paste or very fast writing doesn't prove cheating. Students may paste their own notes or quotes. DraftTrail shows what happened so teachers can ask good questions, and gives honest students a simple way to show their effort.</p><a class="btn" href="/how-it-works/">Read how it works</a></div></section>'''
+    body += '<section class="wrap section" id="free-tools"><h2>Free tools for students and teachers</h2>' + tiles_html() + '<p><a href="/tools/">All free tools →</a></p></section>'
     body += ('<section class="wrap section"><h2>Guides for teachers</h2><ul class="glist" style="list-style:none;padding:0;display:grid;gap:12px">' + ''.join(f'<li style="border:1px solid var(--line);border-radius:12px;padding:14px 16px"><a href="/guides/{g["slug"]}/" style="font-weight:700">{E(g["title"])}</a></li>' for g in GUIDES) + '</ul><p><a href="/guides/">All guides →</a></p></section>')
     body += family_promo('More free tools for teachers')
     page('/', f'{NAME} – Free Writing Process Recorder for Students and Teachers',
@@ -258,7 +259,7 @@ def pages():
 
 def extras():
     open(os.path.join(PUB, 'favicon.svg'), 'w').write(LOGO.replace('class="logo-mark" ', 'xmlns="http://www.w3.org/2000/svg" '))
-    urls = ['/', '/how-it-works/', '/set-up/', '/for-teachers/', '/faq/', '/guides/'] + [f'/guides/{g["slug"]}/' for g in GUIDES] + ['/practice/word-choice/', '/tools/word-counter/', '/tools/readability-checker/', '/tools/typing-test/', '/prompts/'] + [f'/prompts/{t["slug"]}/' for t in PTYPES] + ['/about/', '/privacy/', '/terms/', '/contact/']
+    urls = ['/', '/how-it-works/', '/set-up/', '/for-teachers/', '/faq/', '/guides/'] + [f'/guides/{g["slug"]}/' for g in GUIDES] + ['/practice/word-choice/', '/tools/word-counter/', '/tools/readability-checker/', '/tools/typing-test/', '/tools/', '/prompts/'] + [f'/prompts/{t["slug"]}/' for t in PTYPES] + ['/about/', '/privacy/', '/terms/', '/contact/']
     open(os.path.join(PUB, 'sitemap.xml'), 'w').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'<url><loc>{URL}{u}</loc></url>\n' for u in urls) + '</urlset>\n')
     open(os.path.join(PUB, 'robots.txt'), 'w').write(f'User-agent: *\nDisallow: /write/\nDisallow: /review/\nDisallow: /cdn-cgi/\n\nUser-agent: Mediapartners-Google\nAllow: /\n\nSitemap: {URL}/sitemap.xml\n')
     if CFG['adsense_client']:
@@ -286,7 +287,7 @@ from practice_content import GAME_CSS, wc_game, wc_text
 def practice():
     prose('/practice/word-choice/', 'Word Choice Check: Commonly Confused Words Quiz Game',
           'A free game for students: affect or effect, fewer or less, its or it’s and more. Practice commonly confused words, with a quick guide to each pair.',
-          f'{GAME_CSS}<p class="gmeta muted" style="font-size:14px;margin:0 0 6px">Practice for students</p><h1>Word Choice Check</h1>{wc_game()}{wc_text()}')
+          f'{GAME_CSS}<p class="gmeta muted" style="font-size:14px;margin:0 0 6px"><a href="/tools/">Free tools</a> · Practice for students</p><h1>Word Choice Check</h1>{wc_game()}{wc_text()}')
 
 # ---------------------------------------------------------------- writing tools and prompts
 import urllib.parse as _up
@@ -300,10 +301,24 @@ PT_CSS = ('<style>.ptable{width:100%;border-collapse:collapse;font-size:15px;mar
           '.plist a{flex:none;font-weight:700;white-space:nowrap}.ptiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:16px 0}'
           '.ptiles a{display:block;border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--card);text-decoration:none;color:var(--fg)}.ptiles b{display:block;font-size:19px;color:var(--brand);margin-bottom:4px}'
           '@media(max-width:560px){.plist li{flex-direction:column;align-items:flex-start}}</style>')
+TILES = [('⌨️', 'Typing speed test', '/tools/typing-test/', 'Check your words per minute and accuracy in 15 seconds to 2 minutes, then challenge a friend.', 'New'),
+         ('🔢', 'Word counter', '/tools/word-counter/', 'Count words, characters, sentences and paragraphs, with reading and speaking time.', ''),
+         ('📖', 'Readability checker', '/tools/readability-checker/', 'See the grade level of your writing and spot long, hard sentences.', ''),
+         ('🎯', 'Word Choice Check', '/practice/word-choice/', 'A quick game for commonly confused words: affect or effect, fewer or less and more.', 'Game'),
+         ('💡', 'Writing prompts', '/prompts/', 'Over 100 prompts by grade and type. Tap one and start writing in DraftTrail.', ''),
+         ('✍️', 'DraftTrail writing recorder', '/write/', 'Write and hand in a file that shows how your writing was made, step by step.', '')]
+def tiles_html():
+    return '<div class="ttiles">' + ''.join(f'<a href="{u}"><span class="ti">{i}</span>' + (f'<em>{E(t)}</em>' if t else '') + f'<b>{E(n)}</b><span class="d">{E(d)}</span></a>' for i, n, u, d, t in TILES) + '</div>'
+def tools_hub():
+    prose('/tools/', 'Free Writing Tools for Students and Teachers: Typing Test, Word Counter and More',
+          'Free tools for students and teachers: typing speed test, word counter, readability checker, Word Choice Check game and 100+ writing prompts. No sign-up, nothing uploaded.',
+          '<h1>Free tools</h1><p class="lead">Free tools for writing class. They work in the browser with no sign-up, and nothing you type is uploaded.</p>' + tiles_html() +
+          '<h2>For teachers</h2><p>Every tool works on a projector and on students’ phones. Share a tool’s link with your class: the typing test and Word Choice Check have a <b>Challenge a friend</b> link so the whole class gets the same test.</p>'
+          '<p>More free classroom tools from Telar Labs: a <a href="https://pizarrapad.telarlabs.net/tools/">classroom timer, spinner wheel and name picker</a> on PizarraPad, and a <a href="https://quizpolice.telarlabs.net/tools/">grade calculator and flash card maker</a> on QuizPolice.</p>')
 def wtools():
     for path, title, short, desc, tool, text in WTOOLS:
         other = ''.join(f'<li><a href="{p}">{E(s)}</a></li>' for p, _, s, _, _, _ in WTOOLS if p != path)
-        prose(path, title, desc, f'{WCSS}{PT_CSS}<p class="muted" style="font-size:14px;margin:0 0 6px">Free writing tools</p><h1>{E(short)}</h1>{tool}{text}'
+        prose(path, title, desc, f'{WCSS}{PT_CSS}<p class="muted" style="font-size:14px;margin:0 0 6px"><a href="/tools/">Free tools</a></p><h1>{E(short)}</h1>{tool}{text}'
               f'<h2>More free tools</h2><ul>{other}<li><a href="/prompts/">Writing prompts for every grade</a></li><li><a href="/practice/word-choice/">Word Choice Check</a></li></ul>')
     tiles = ''.join(f'<a href="/prompts/{t["slug"]}/"><b>{E(t["name"])}</b>{E(t["intro"])}</a>' for t in PTYPES)
     prose('/prompts/', 'Writing Prompts for Students: 100+ Free Prompts by Grade', 'Over 100 free writing prompts for elementary, middle and high school: narrative, persuasive, opinion, informative, descriptive and journal. Start writing in one tap.',
@@ -320,7 +335,7 @@ def wtools():
               f'<h2>More prompts</h2><ul>{others}</ul>')
 
 if __name__ == '__main__':
-    home(); pages(); guides(); practice(); wtools(); extras(); print('Built DraftTrail pages')
+    home(); pages(); guides(); practice(); wtools(); tools_hub(); extras(); print('Built DraftTrail pages')
 
     # AdSense: no ad code on error, contact and legal pages (no publisher content)
     import re as _re
