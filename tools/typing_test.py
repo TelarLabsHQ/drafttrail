@@ -70,7 +70,7 @@ TT = r'''
 .tt-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:10px}.tt-stats div{border:1px solid var(--line);border-radius:12px;padding:10px 12px}.tt-stats b{display:block;font:700 22px var(--head);color:var(--fg)}.tt-stats span{font-size:13px;color:var(--muted)}
 .tt-lvl{background:var(--bg);border-radius:12px;padding:12px 14px;margin:12px 0 0}
 @media(hover:none),(max-width:600px){.tt-kb{display:none}}
-.tt-box .tt-text{-webkit-mask-image:linear-gradient(#000 70%,transparent 100%);mask-image:linear-gradient(#000 70%,transparent 100%)}
+.tt-box{-webkit-mask-image:linear-gradient(#000 calc(100% - 22px),rgba(0,0,0,.25) 100%);mask-image:linear-gradient(#000 calc(100% - 22px),rgba(0,0,0,.25) 100%)}
 .tt-hist{margin-top:10px}.tt-hist svg{width:100%;height:70px;display:block}.tt-hist p{margin:4px 0 0;font-size:13px;color:var(--muted)}
 </style>
 <script>(function(){
