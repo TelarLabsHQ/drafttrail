@@ -69,7 +69,7 @@ def page(path, title, desc, body):
 <footer class="foot"><div class="wrap foot-in">
   <div><a class="logo" href="/">{LOGO}<span>{E(NAME)}</span></a><p class="muted">Free writing-process recorder for students and teachers. Part of the {E(ST)} teacher tools.</p></div>
   <div class="foot-cols">
-    <div><h4>Use it</h4><a href="/write/">Start writing</a><a href="/review/">Review .drafttrail files</a><a href="/how-it-works/">How it works</a><a href="/for-teachers/">For teachers</a><a href="/guides/">Guides</a><a href="/prompts/">Writing prompts</a><a href="/tools/word-counter/">Word counter</a><a href="/tools/readability-checker/">Readability checker</a><a href="/practice/word-choice/">Word Choice Check</a><a href="/faq/">FAQ</a></div>
+    <div><h4>Use it</h4><a href="/write/">Start writing</a><a href="/review/">Review .drafttrail files</a><a href="/how-it-works/">How it works</a><a href="/for-teachers/">For teachers</a><a href="/guides/">Guides</a><a href="/prompts/">Writing prompts</a><a href="/tools/word-counter/">Word counter</a><a href="/tools/readability-checker/">Readability checker</a><a href="/tools/typing-test/">Typing speed test</a><a href="/practice/word-choice/">Word Choice Check</a><a href="/faq/">FAQ</a></div>
     <div><h4><a href="https://telarlabs.net" style="color:inherit;margin:0">{E(ST)}</a></h4><a href="https://telarlabs.net">Telar Labs home</a><a href="https://telarlabs.net/guides/">Telar Labs guides</a><a href="/about/">About</a><a href="/privacy/">Privacy policy</a><a href="/terms/">Terms of use</a><a href="/contact/">Contact</a></div>
   </div>
 </div>{family_row()}<div class="wrap fine">&copy; {date.today().year} {E(ST)}.</div></footer>
@@ -258,7 +258,7 @@ def pages():
 
 def extras():
     open(os.path.join(PUB, 'favicon.svg'), 'w').write(LOGO.replace('class="logo-mark" ', 'xmlns="http://www.w3.org/2000/svg" '))
-    urls = ['/', '/how-it-works/', '/set-up/', '/for-teachers/', '/faq/', '/guides/'] + [f'/guides/{g["slug"]}/' for g in GUIDES] + ['/practice/word-choice/', '/tools/word-counter/', '/tools/readability-checker/', '/prompts/'] + [f'/prompts/{t["slug"]}/' for t in PTYPES] + ['/about/', '/privacy/', '/terms/', '/contact/']
+    urls = ['/', '/how-it-works/', '/set-up/', '/for-teachers/', '/faq/', '/guides/'] + [f'/guides/{g["slug"]}/' for g in GUIDES] + ['/practice/word-choice/', '/tools/word-counter/', '/tools/readability-checker/', '/tools/typing-test/', '/prompts/'] + [f'/prompts/{t["slug"]}/' for t in PTYPES] + ['/about/', '/privacy/', '/terms/', '/contact/']
     open(os.path.join(PUB, 'sitemap.xml'), 'w').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'<url><loc>{URL}{u}</loc></url>\n' for u in urls) + '</urlset>\n')
     open(os.path.join(PUB, 'robots.txt'), 'w').write(f'User-agent: *\nDisallow: /write/\nDisallow: /review/\nDisallow: /cdn-cgi/\n\nUser-agent: Mediapartners-Google\nAllow: /\n\nSitemap: {URL}/sitemap.xml\n')
     if CFG['adsense_client']:
@@ -291,6 +291,8 @@ def practice():
 # ---------------------------------------------------------------- writing tools and prompts
 import urllib.parse as _up
 from writing_tools import TOOLS as WTOOLS, CSS as WCSS
+from typing_test import TOOL as _TT
+WTOOLS = WTOOLS + [_TT]
 from prompts_content import TYPES as PTYPES, HUB_INTRO, HUB_TEXT
 PT_CSS = ('<style>.ptable{width:100%;border-collapse:collapse;font-size:15px;margin:10px 0 18px}.ptable th,.ptable td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}'
           '.ptable th{font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}'
