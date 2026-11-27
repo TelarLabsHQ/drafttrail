@@ -255,7 +255,7 @@ def pages():
     prose('/terms/', 'Terms of Use', f'Terms of use for {NAME}.', f'''
 <h1>Terms of use</h1><ul><li>{E(NAME)} is free to use for school and personal writing.</li><li>Your writing belongs to you.</li><li>Flags are signals for a conversation, not proof of misconduct; teachers should use them fairly.</li>
 <li>The service is provided as it is, without warranty. Keep your own copies of important work.</li></ul><p>Questions: <a href="mailto:{E(MAIL)}">{E(MAIL)}</a></p><p class="muted">Last updated {E(CFG["launch_date"])}.</p>''')
-    prose('/contact/', 'Contact', f'Contact {NAME}.', f'<h1>Contact us</h1><p class="lead">Questions or ideas?</p><p>Email: <a href="mailto:{E(MAIL)}">{E(MAIL)}</a></p>')
+    prose('/contact/', 'Contact', f'Contact {NAME}.', f'<h1>Contact us</h1><p class="lead">Questions, feedback, bug reports or ideas for DraftTrail? We would love to hear from you.</p><p>Email: <a href="mailto:{E(MAIL)}">{E(MAIL)}</a></p><p>We usually reply within two to three working days. If you are reporting a problem, please include the page link, what you were doing and what device and browser you were using. Please don’t send students’ writing or .drafttrail files unless we ask for one to fix a problem.</p>')
 
 def extras():
     open(os.path.join(PUB, 'favicon.svg'), 'w').write(LOGO.replace('class="logo-mark" ', 'xmlns="http://www.w3.org/2000/svg" '))
